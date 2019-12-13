@@ -9,7 +9,7 @@ const double EPSILON = 1e-15;
 /**
  * The righthand side for a simple harmonic oscillator.
  */
-void rhsSHO(Grid& grid, double **u, double **dudt){
+void rhsSHO(const Grid& grid, double **u, double **dudt){
   for(int i = 0; i < grid.getSize(); i++){
     dudt[i][0] = u[i][1];
     dudt[i][1] = -u[i][0];
@@ -19,7 +19,7 @@ void rhsSHO(Grid& grid, double **u, double **dudt){
 /**
  * The righthand side for a very stiff ODE.
  */
-void rhsStiff(Grid& grid, double **u, double **dudt){
+void rhsStiff(const Grid& grid, double **u, double **dudt){
   for(int i = 0; i < grid.getSize(); i++){
     dudt[i][0] = 2.0*u[i][0] - std::exp(u[i][1]);
     dudt[i][1] = 1.0;

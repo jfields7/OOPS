@@ -39,7 +39,7 @@ Result ODE::evolveStep(double dt){
   for(unsigned int i = 0; i < solver->getNStages(); i++){
     // Loop over every data set in the domain.
     for(auto it = data.begin(); it != data.end(); ++it){
-      solver->calcStage(&rhs, it->getData(), it->getIntermediateData(), (it->getWorkData())[i],
+      solver->calcStage(rhs, it->getData(), it->getIntermediateData(), (it->getWorkData())[i],
                        it->getGrid(), dt, nEqs, i);
     }
 
@@ -61,7 +61,7 @@ void ODE::performGridExchange(){
   // TODO
 }
 
-Result SetParameters(Parameters *p){
+Result ODE::setParameters(Parameters *p){
   if(p->getId() == pId){
     params = p;
     return SUCCESS;

@@ -13,7 +13,7 @@ const double sigma = 1e-2;
 /**
  * A righthand side for the one-dimensional heat equation.
  */
-void rhsHeat(Grid& grid, double **u, double **dudt){
+void rhsHeat(const Grid& grid, double **u, double **dudt){
   // We need at least five points on our grid. If not, throw an error and
   // quit.
   if (grid.getSize() < 5){

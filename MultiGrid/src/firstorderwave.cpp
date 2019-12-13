@@ -2,19 +2,26 @@
 #include <operators.h>
 #include <iostream>
 #include <waveparameters.h>
+#include <cmath>
 
 // FirstOrderWave {{{
 FirstOrderWave::FirstOrderWave(Domain& d, Solver& s) : ODE(3, 1){
   if(d.getGhostPoints() < 2){
     std::cerr << "Warning: domain has fewer ghost points than expected. Solution may not behave correctly.\n";
   }
-  domain = d;
-  solver = s;
+  domain = &d;
+  solver = &s;
 
   // Set some default parameters.
-  params = WaveParameters();
+  params = new WaveParameters();
 
   reallocateData();
+}
+// }}}
+
+// ~FirstOrderWave {{{
+FirstOrderWave::~FirstOrderWave(){
+  delete params;
 }
 // }}}
 
@@ -101,8 +108,8 @@ void FirstOrderWave::rhs(Grid& grid, double **u, double **dudt){
 
 // applyKODiss {{{
 void FirstOrderWave::applyKODiss(Grid& grid, double **u, double **dudt){
-  WaveParameters wp = (WaveParameters) params;
-  koSigma = wp.getKOSigma();
+  WaveParameters *wp = (WaveParameters*) params;
+  double koSigma = wp->getKOSigma();
   // The grid needs to have at least 7 points for this to work.
   if(grid.getSize() < 7){
     printf("Grid is too small to use Kreiss-Oliger dissipation.\n");
@@ -178,8 +185,8 @@ void FirstOrderWave::applyKODiss(Grid& grid, double **u, double **dudt){
 // }}}
 
 // applyBoundaries {{{
-void applyBoundaries(){
-  unsigned int nb = domain.getGhostPoints();
+void FirstOrderWave::applyBoundaries(){
+  unsigned int nb = domain->getGhostPoints();
   auto left_it = data.begin();
   auto right_it = data.end();
 
@@ -202,11 +209,12 @@ void applyBoundaries(){
 }
 // }}}
 
+// initData {{{
 void FirstOrderWave::initData(){
   // Cast our parameters to wave parameters.
-  WaveParameters wp = (WaveParameters) params;
+  WaveParameters *wp = (WaveParameters*) params;
 
-  switch(params.getInitialConditions()){
+  switch(wp->getInitialConditions()){
     case WaveParameters::GAUSSIAN:
       applyGaussian();
     default:
@@ -215,14 +223,16 @@ void FirstOrderWave::initData(){
       break;
   }
 }
+// }}}
 
+// applyGaussian {{{
 void FirstOrderWave::applyGaussian(){
   // First, let's identify the center.
-  double x0 = 0.5*(domain.getBounds()[1] + domain.getBounds()[0]);
+  double x0 = 0.5*(domain->getBounds()[1] + domain->getBounds()[0]);
 
   // Next, let's loop through every grid and start assigning points.
   for(auto it = data.begin(); it != data.end(); ++it){
-    double *x = it->getGrid().getPoints();
+    const double *x = it->getGrid().getPoints();
     unsigned int nx = it->getGrid().getSize();
     double **u = it->getData();
     for(unsigned int i = 0; i < nx; i++){
@@ -233,3 +243,4 @@ void FirstOrderWave::applyGaussian(){
     }
   }
 }
+// }}}

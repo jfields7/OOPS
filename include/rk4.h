@@ -34,8 +34,9 @@ class RK4 : public Solver{
 
     // Inherited methods
     virtual Result calcStage(void (*rhs)(const Grid&,double**,double**), double *data0[], double *dataint[], 
-                             double *dest[], const Grid& grid, double dt, const unsigned int vars, int stage);
-    virtual Result combineStages(double **data[], double *dest[], Grid& grid, double dt, const int vars);
+                             double *dest[], const Grid& grid, double dt, const unsigned int vars, 
+                             unsigned int stage);
+    virtual Result combineStages(double **data[], double *dest[], const Grid& grid, double dt, const int vars);
 };
 
 #endif

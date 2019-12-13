@@ -1,7 +1,8 @@
 #include <rk4.h>
 
 Result RK4::calcStage(void (*rhs)(const Grid&, double**,double**), double *data0[], double *dataint[], 
-                      double *dest[], const Grid& grid, double dt, const unsigned int vars, int stage){
+                      double *dest[], const Grid& grid, double dt, const unsigned int vars, 
+                      unsigned int stage){
   int shp = grid.getSize();
   switch(stage){
     case 0:
@@ -49,7 +50,7 @@ Result RK4::calcStage(void (*rhs)(const Grid&, double**,double**), double *data0
   }
 }
 
-Result RK4::combineStages(double **data[], double *dest[], Grid& grid, double dt, int vars){
+Result RK4::combineStages(double **data[], double *dest[], const Grid& grid, double dt, int vars){
   int shp = grid.getSize();
   // Combine all the stages according to the RK4 method.
   double **k1 = data[0];

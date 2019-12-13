@@ -15,14 +15,6 @@
  * PDEs, too.
  */
 class ODE{
-  private:
-    /**
-     * Because everything is dynamically allocated, copying an ODE object
-     * is a baaaaaaad idea. We make the copy constructor private to prevent 
-     * unintended disaster.
-     */
-    ODE(const ODE& other) :nEqs(0), pId(0){};
-
   protected:
     /**
      * The number of independent equations in this system.
@@ -55,16 +47,6 @@ class ODE{
     Solver *solver;
 
     /**
-     * The righthand side routine for the ODEs. It operates on a single grid.
-     * This is protected because it shouldn't be used by anything except an
-     * ODE child object.
-     * @param grid - the grid this function should be calculated on.
-     * @param u - the incoming data.
-     * @param dudt - the outgoing time derivative data.
-     */
-    virtual void rhs(const Grid& grid, double **u, double **dudt) = 0;
-
-    /**
      * The actual ODE solver is generic and just wants a righthand side routine.
      * You can't pass non-static class methods, and you can't have a method that
      * is both static and virtual. Consequently, the best option is just to have
@@ -75,6 +57,13 @@ class ODE{
      * to point rhs to that function.
      */
     void (*rhs)(const Grid&, double**, double**);
+
+    /**
+     * Because everything is dynamically allocated, copying an ODE object
+     * is a baaaaaaad idea. We make the copy constructor private to prevent 
+     * unintended disaster.
+     */
+    ODE(const ODE& other) :nEqs(0), pId(0){};
 
     /**
      * Apply boundary conditions to the data. The default version assumes that
@@ -140,7 +129,7 @@ class ODE{
      * The initial condition function for setting up the data based on the
      * Parameter object assigned to the class.
      */
-    virtual void initData();
+    virtual void initData() = 0;
 
     /**
      * Set the Parameters object for this object. The Parameters id must

@@ -21,14 +21,14 @@ const unsigned int U_CHI = 2;
 const unsigned int VARS1 = 3;
 const unsigned int VARS2 = 2;
 
-void applyKODiss(Grid& grid, double **u, double **dudt, const double sigma, const unsigned int nvars);
+void applyKODiss(const Grid& grid, double **u, double **dudt, const double sigma, const unsigned int nvars);
 
 // rhsSecondOrderWave {{{
 /**
  * The righthand side for the wave equation split into a two-variable system
  * that is first order in time and second order in space.
  */
-void rhsSecondOrderWave(Grid& grid, double **u, double **dudt){
+void rhsSecondOrderWave(const Grid& grid, double **u, double **dudt){
   // We need at least five points on our grid. If not, throw an error and quit.
   if(grid.getSize() < 5){
     printf("Grid is too small. Need at least 5 points.\n");
@@ -100,7 +100,7 @@ void rhsSecondOrderWave(Grid& grid, double **u, double **dudt){
  * The righthand side for the wave equation split into a three-variable system
  * that is first order in space and time.
  */
-void rhsFirstOrderWave(Grid& grid, double **u, double **dudt){
+void rhsFirstOrderWave(const Grid& grid, double **u, double **dudt){
   // We need at least five points on our grid. If not, throw an error and quit.
   if(grid.getSize() < 5){
     printf("Grid is too small. Need at least 5 points.\n");
@@ -199,7 +199,7 @@ void rhsFirstOrderWave(Grid& grid, double **u, double **dudt){
 /**
  * Apply Kreiss-Oliger dissipation to the righthand side of a dataset.
  */
-void applyKODiss(Grid& grid, double **u, double **dudt, const double sigma, const unsigned int nvars){
+void applyKODiss(const Grid& grid, double **u, double **dudt, const double sigma, const unsigned int nvars){
   // The grid needs to have at least 7 points for this to work.
   if(grid.getSize() < 7){
     printf("Grid is too small to use Kreiss-Oliger dissipation.\n");

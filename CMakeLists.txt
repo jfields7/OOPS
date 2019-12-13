@@ -25,6 +25,7 @@ set(GRID_SOURCE_FILES
     src/domain.cpp
     src/rk4.cpp
     src/ode.cpp
+    src/solverdata.cpp
    )
 
 set(TEST_SOURCE_FILES

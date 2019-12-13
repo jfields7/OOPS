@@ -19,6 +19,7 @@ class FirstOrderWave : public ODE {
 
   public:
     FirstOrderWave(Domain& d, Solver& s);
+    virtual ~FirstOrderWave();
 
     virtual void initData();
 };

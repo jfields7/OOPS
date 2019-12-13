@@ -59,7 +59,7 @@ class Solver{
      * @param vars The number of variables in the system.
      * @return A Result enum designating what the outcome of the calculation was.
      */
-    virtual Result combineStages(double **data[], double *dest[], Grid& grid, double dt, const int vars) = 0;
+    virtual Result combineStages(double **data[], double *dest[], const Grid& grid, double dt, const int vars) = 0;
 
     /**
      * Find out how many stages the solver has.

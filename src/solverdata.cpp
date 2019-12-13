@@ -1,12 +1,12 @@
 #include <solverdata.h>
 #include <new>
+#include <iostream>
 
-SolverData::SolverData(unsigned int eqCount, unsigned int nStages, Grid& grid){
-  this->grid = grid;
+SolverData::SolverData(unsigned int eqCount, unsigned int nStages, const Grid& grid): mGrid(grid){
   this->nStages = nStages;
   nEq = eqCount;
 
-  unsigned int nx = grid.getSize();
+  unsigned int nx = mGrid.getSize();
   
   // Try to allocate memory for the arrays.
   try{
@@ -33,18 +33,18 @@ SolverData::SolverData(unsigned int eqCount, unsigned int nStages, Grid& grid){
   }
 }
 
-SolverData::SolverData(const SolverData& other){
+SolverData::SolverData(const SolverData& other): mGrid(other.getGrid()){
 
 }
 
 SolverData::~SolverData(){
   for(int i = 0; i < nStages; i++){
-    for(int j = 0; j < grid.getSize(); i++){
+    for(int j = 0; j < mGrid.getSize(); i++){
       delete[] work[i][j];
     }
     delete[] work[i];
   }
-  for(int i = 0; i < grid.getSize(); i++){
+  for(int i = 0; i < mGrid.getSize(); i++){
     delete[] data_int[i];
     delete[] data[i];
   }
@@ -54,5 +54,5 @@ SolverData::~SolverData(){
 }
 
 bool SolverData::operator < (const SolverData& data) const{
-  return grid < data.getGrid();
+  return mGrid < data.getGrid();
 }

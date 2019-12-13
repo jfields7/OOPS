@@ -26,13 +26,13 @@ class WaveParameters : public Parameters {
       koSigma = sigma;
     }
 
-    inline void getKOSigma(){
+    inline double getKOSigma(){
       return koSigma;
     }
   private:
     InitialConditions ics;
 
     double koSigma;
-}
+};
 
 #endif

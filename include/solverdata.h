@@ -35,14 +35,14 @@ class SolverData{
   /**
    * The grid this data belongs to.
    */
-  Grid& grid;
+  const Grid& mGrid;
   // }}}
 
   /**
    * A copy constructor for SolverData. We make this private so that
    * the object cannot be copied.
    */
-  //SolverData(const SolverData& other);
+  SolverData(const SolverData& other);
 
   public:
   /**
@@ -51,7 +51,7 @@ class SolverData{
    * @param stages  - the number of stages used by the solver.
    * @param grid    - the Grid this data belongs to.
    */
-  SolverData(unsigned int eqCount, unsigned int stages, Grid& grid);
+  SolverData(unsigned int eqCount, unsigned int stages, const Grid& grid);
 
   /**
    * A destructor for SolverData that deletes all the memory that was allocated.
@@ -91,7 +91,7 @@ class SolverData{
    * Get the grid this data corresponds to.
    */
   inline const Grid& getGrid() const{
-    return grid;
+    return mGrid;
   }
   // }}}
 
