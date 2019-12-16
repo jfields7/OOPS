@@ -26,7 +26,7 @@ FirstOrderWave::~FirstOrderWave(){
 // }}}
 
 // rhs {{{
-void FirstOrderWave::rhs(Grid& grid, double **u, double **dudt){
+void FirstOrderWave::rhs(const Grid& grid, double **u, double **dudt){
   // Check that the grid is actually big enough.
   if(grid.getSize() < 5){
     printf("Grid is too small. Need at least 5 points.\n");
@@ -107,7 +107,7 @@ void FirstOrderWave::rhs(Grid& grid, double **u, double **dudt){
 // }}}
 
 // applyKODiss {{{
-void FirstOrderWave::applyKODiss(Grid& grid, double **u, double **dudt){
+void FirstOrderWave::applyKODiss(const Grid& grid, double **u, double **dudt){
   WaveParameters *wp = (WaveParameters*) params;
   double koSigma = wp->getKOSigma();
   // The grid needs to have at least 7 points for this to work.

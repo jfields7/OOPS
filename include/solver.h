@@ -1,6 +1,8 @@
 #ifndef SOLVER_H
 #define SOLVER_H
 
+class ODE;
+
 /**************************************************************************************
  *
  * Class name: Solver
@@ -47,6 +49,14 @@ class Solver{
     virtual Result calcStage(void (*rhs)(const Grid&, double**,double**), double *data0[], double *dataint[],
                              double *dest[], const Grid& grid, double dt, const unsigned int vars, 
                              unsigned int stage) = 0;
+
+    /**
+     * Calculate a single stage of the solver with vital information being provided by an ODE object. 
+     * Although the grid and work data are all included in the ODE object, we need to specify them anyway
+     * so that we only operate on a single grid.
+     */
+    virtual Result calcStage(ODE *ode, double *data0[], double *dataint[], double *dest[], const Grid& grid,
+                             double dt, unsigned int stage) = 0;
 
     /**
      * Combine all the calculations from every stage.

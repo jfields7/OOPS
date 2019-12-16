@@ -1,4 +1,5 @@
 #include <rk4.h>
+#include <ode.h>
 
 Result RK4::calcStage(void (*rhs)(const Grid&, double**,double**), double *data0[], double *dataint[], 
                       double *dest[], const Grid& grid, double dt, const unsigned int vars, 
@@ -42,6 +43,48 @@ Result RK4::calcStage(void (*rhs)(const Grid&, double**,double**), double *data0
           //dest[i][m] *= dt;
         }
       }
+      return SUCCESS;
+      break;
+    default:
+      return INVALID_STAGE;
+      break;
+  }
+}
+
+Result RK4::calcStage(ODE *ode, double *data0[], double *dataint[], double *dest[],
+                      const Grid& grid, double dt, unsigned int stage){
+  unsigned int shp = grid.getSize();
+  unsigned int vars = ode->getNEqs();
+  switch(stage){
+    case 0:
+      ode->rhs(grid, dataint, dest);
+      for(int i = 0; i < shp; i++){
+        for(int m = 0; m < vars; m++){
+          dataint[i][m] = data0[i][m] + 0.5*dest[i][m]*dt;
+        }
+      }
+      return SUCCESS;
+      break;
+    case 1:
+      ode->rhs(grid, dataint, dest);
+      for(int i = 0; i < shp; i++){
+        for(int m = 0; m < vars; m++){
+          dataint[i][m] = data0[i][m] + 0.5*dest[i][m]*dt;
+        }
+      }
+      return SUCCESS;
+      break;
+    case 2:
+      ode->rhs(grid, dataint, dest);
+      for(int i = 0; i < shp; i++){
+        for(int m = 0; m < vars; m++){
+          dataint[i][m] = data0[i][m] + dest[i][m]*dt;
+        }
+      }
+      return SUCCESS;
+      break;
+    case 3:
+      ode->rhs(grid, dataint, dest);
       return SUCCESS;
       break;
     default:

@@ -39,8 +39,10 @@ Result ODE::evolveStep(double dt){
   for(unsigned int i = 0; i < solver->getNStages(); i++){
     // Loop over every data set in the domain.
     for(auto it = data.begin(); it != data.end(); ++it){
-      solver->calcStage(rhs, it->getData(), it->getIntermediateData(), (it->getWorkData())[i],
-                       it->getGrid(), dt, nEqs, i);
+      //solver->calcStage(rhs, it->getData(), it->getIntermediateData(), (it->getWorkData())[i],
+      //                 it->getGrid(), dt, nEqs, i);
+      solver->calcStage(this, it->getData(), it->getIntermediateData(), (it->getWorkData())[i],
+                        it->getGrid(), dt, i);
     }
 
     // Perform the grid exchange and apply boundary conditions.

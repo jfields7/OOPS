@@ -6,6 +6,8 @@
 #include "domain.h"
 #include "solver.h"
 
+class ODE;
+
 /****************************************************************************************
  *
  * Class name: RK4
@@ -36,6 +38,8 @@ class RK4 : public Solver{
     virtual Result calcStage(void (*rhs)(const Grid&,double**,double**), double *data0[], double *dataint[], 
                              double *dest[], const Grid& grid, double dt, const unsigned int vars, 
                              unsigned int stage);
+    virtual Result calcStage(ODE *ode, double *data0[], double *dataint[], double *dest[], 
+                             const Grid& grid, double dt, unsigned int stage);
     virtual Result combineStages(double **data[], double *dest[], const Grid& grid, double dt, const int vars);
 };
 

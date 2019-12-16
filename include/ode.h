@@ -47,18 +47,6 @@ class ODE{
     Solver *solver;
 
     /**
-     * The actual ODE solver is generic and just wants a righthand side routine.
-     * You can't pass non-static class methods, and you can't have a method that
-     * is both static and virtual. Consequently, the best option is just to have
-     * a pointer to a valid function.
-     * 
-     * Recommended implementation practices: create a static righthand side 
-     * routine in every descendent of ODE, then instruct the class constructor
-     * to point rhs to that function.
-     */
-    void (*rhs)(const Grid&, double**, double**);
-
-    /**
      * Because everything is dynamically allocated, copying an ODE object
      * is a baaaaaaad idea. We make the copy constructor private to prevent 
      * unintended disaster.
@@ -130,6 +118,17 @@ class ODE{
      * Parameter object assigned to the class.
      */
     virtual void initData() = 0;
+
+    /**
+     * The righthand side routine for the ODE solver. This, of course, should be
+     * overwritten in the descendent ODE.
+     * @param grid - The specific grid to perform the calculation on.
+     * @param data - A 2d array of data containing the current data for the 
+     *               system on the Grid.
+     * @param dudt - A 2d array of data to store the righthand side data for
+     *               this Grid object.
+     */
+    virtual void rhs(const Grid& grid, double** data, double** dudt) = 0;
 
     /**
      * Set the Parameters object for this object. The Parameters id must

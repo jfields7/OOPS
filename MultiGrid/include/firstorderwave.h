@@ -6,16 +6,17 @@
 class FirstOrderWave : public ODE {
   private:
     // Variable labels.
-    const unsigned int U_PHI = 0;
-    const unsigned int U_PI = 1;
-    const unsigned int U_CHI = 2;
+    static const unsigned int U_PHI = 0;
+    static const unsigned int U_PI = 1;
+    static const unsigned int U_CHI = 2;
 
-    void applyKODiss(Grid& grid, double **u, double **dudt);
+    void applyKODiss(const Grid& grid, double **u, double **dudt);
 
     void applyGaussian();
   protected:
-    virtual void rhs(Grid& grid, double **u, double **dudt);
     virtual void applyBoundaries();
+
+    virtual void rhs(const Grid& grid, double **u, double **dudt);
 
   public:
     FirstOrderWave(Domain& d, Solver& s);

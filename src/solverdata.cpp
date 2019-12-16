@@ -39,7 +39,7 @@ SolverData::SolverData(const SolverData& other): mGrid(other.getGrid()){
 
 SolverData::~SolverData(){
   for(int i = 0; i < nStages; i++){
-    for(int j = 0; j < mGrid.getSize(); i++){
+    for(int j = 0; j < mGrid.getSize(); j++){
       delete[] work[i][j];
     }
     delete[] work[i];
