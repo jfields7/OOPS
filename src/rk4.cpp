@@ -57,7 +57,7 @@ Result RK4::calcStage(ODE *ode, double *data0[], double *dataint[], double *dest
   unsigned int vars = ode->getNEqs();
   switch(stage){
     case 0:
-      ode->rhs(grid, dataint, dest);
+      ode->rhs(grid, data0, dest);
       for(int i = 0; i < shp; i++){
         for(int m = 0; m < vars; m++){
           dataint[i][m] = data0[i][m] + 0.5*dest[i][m]*dt;

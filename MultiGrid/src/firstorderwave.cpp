@@ -188,23 +188,31 @@ void FirstOrderWave::applyKODiss(const Grid& grid, double **u, double **dudt){
 void FirstOrderWave::applyBoundaries(){
   unsigned int nb = domain->getGhostPoints();
   auto left_it = data.begin();
-  auto right_it = data.end();
+  auto right_it = --data.end();
 
   double **left = left_it->getData();
   double **right = right_it->getData();
   unsigned int nr = right_it->getGrid().getSize();
 
-  // For now, we'll just apply periodic boundaries.
+  // For now, we'll just apply fixed boundaries.
   for(int i = 0; i < nb; i++){
     // Set the left boundary.
-    left[i][U_PHI] = right[nr - 1 - nb - i][U_PHI];
-    left[i][U_PI] = right[nr - 1 - nb - i][U_PI];
-    left[i][U_CHI] = right[nr - 1 - nb - i][U_CHI];
+    //left[i][U_PHI] = right[nr - 1 - nb - i][U_PHI];
+    //left[i][U_PI] = right[nr - 1 - nb - i][U_PI];
+    //left[i][U_CHI] = right[nr - 1 - nb - i][U_CHI];
 
     // Set the right boundary.
-    right[nr - 1 - i][U_PHI] = left[nb + i][U_PHI];
-    right[nr - 1 - i][U_PI] = left[nb + i][U_PI];
-    right[nr - 1 - i][U_CHI] = left[nb + i][U_CHI];
+    //right[nr - 1 - i][U_PHI] = left[nb + i][U_PHI];
+    //right[nr - 1 - i][U_PI] = left[nb + i][U_PI];
+    //right[nr - 1 - i][U_CHI] = left[nb + i][U_CHI];
+
+    left[i][U_PHI] = 0.0;
+    left[i][U_PI] = 0.0;
+    left[i][U_CHI] = 0.0;
+
+    right[nr - 1 - i][U_PHI] = 0.0;
+    right[nr - 1 - i][U_PI] = 0.0;
+    right[nr - 1 - i][U_CHI] = 0.0;
   }
 }
 // }}}
@@ -217,6 +225,7 @@ void FirstOrderWave::initData(){
   switch(wp->getInitialConditions()){
     case WaveParameters::GAUSSIAN:
       applyGaussian();
+      break;
     default:
       std::cerr << "Warning: unrecognized initial conditions selected. Defaulting to Gaussian.\n";
       applyGaussian();

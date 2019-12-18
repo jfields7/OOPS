@@ -47,6 +47,11 @@ class ODE{
     Solver *solver;
 
     /**
+     * The maximum grid spacing on the domain in question.
+     */
+    double max_dx;
+
+    /**
      * Because everything is dynamically allocated, copying an ODE object
      * is a baaaaaaad idea. We make the copy constructor private to prevent 
      * unintended disaster.
@@ -69,6 +74,27 @@ class ODE{
      * sizes, this involves interpolation.
      */
     void performGridExchange();
+
+    /**
+     * Swap the ghost points between two data sets. Again, if the grids are different
+     * sizes, we perform interpolation.
+     */
+    void exchangeGhostPoints(const SolverData &data1, const SolverData &data2);
+
+    /**
+     * Interpolate from data2 to get the ghost points for data1.
+     * @param datal - The left data, assumed to be finer.
+     * @param datar - The right data, assumed to be coarser.
+     */
+    void interpolateLeft(const SolverData &datal, const SolverData &datar);
+
+    /**
+     * Interpolate from data1 to get the ghost points for data2.
+     * @param datal - The left data, assumed to be coarser.
+     * @param datar - The right data, assumed to be finer.
+     */
+    void interpolateRight(const SolverData &datal, const SolverData &datar);
+      
   public:
     /**
      * Since this is an abstract class, the only thing the constructor needs
@@ -159,6 +185,16 @@ class ODE{
     inline Parameters *getParameters(){
       return params;
     }
+
+    /**
+     * Output a frame of one variable in the ODE to the specified .sdf file.
+     */
+    void output_frame(char *name, double t, unsigned int var);
+
+    /**
+     * Dump all of the current data to a .csv file.
+     */
+    void dump_csv(char *name, double t, unsigned int var);
 };
 
 #endif
