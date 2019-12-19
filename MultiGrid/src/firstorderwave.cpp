@@ -34,7 +34,7 @@ void FirstOrderWave::rhs(const Grid& grid, double **u, double **dudt){
   }
   // Define some variables we'l need.
   double stencil3[3] = {0.0, 0.0, 0.0};
-  double stencil5[5] = {0.0, 0.0, 0.0};
+  double stencil5[5] = {0.0, 0.0, 0.0, 0.0, 0.0};
   double dx = grid.getSpacing();
   int shp = grid.getSize();
 
@@ -92,17 +92,17 @@ void FirstOrderWave::rhs(const Grid& grid, double **u, double **dudt){
 
   // Rightmost point
   dudt[shp - 1][U_PHI] = u[shp - 1][U_PI];
-  stencil3[0] = u[shp - 3][U_CHI];
+  stencil3[2] = u[shp - 3][U_CHI];
   stencil3[1] = u[shp - 2][U_CHI];
-  stencil3[2] = u[shp - 1][U_CHI];
+  stencil3[0] = u[shp - 1][U_CHI];
   dudt[shp - 1][U_PI] = operators::dx_2off(stencil3, dx);
-  stencil3[0] = u[shp - 3][U_PI];
+  stencil3[2] = u[shp - 3][U_PI];
   stencil3[1] = u[shp - 2][U_PI];
-  stencil3[2] = u[shp - 1][U_PI];
+  stencil3[0] = u[shp - 1][U_PI];
   dudt[shp - 1][U_CHI] = operators::dx_2off(stencil3, dx);
 
   // We'll need to do something for Kreiss-Oliger dissipation.
-  applyKODiss(grid, u, dudt);
+  //applyKODiss(grid, u, dudt);
 }
 // }}}
 
@@ -185,13 +185,23 @@ void FirstOrderWave::applyKODiss(const Grid& grid, double **u, double **dudt){
 // }}}
 
 // applyBoundaries {{{
-void FirstOrderWave::applyBoundaries(){
+//void FirstOrderWave::applyBoundaries(double **data, unsigned int shp){
+void FirstOrderWave::applyBoundaries(bool intermediate){
   unsigned int nb = domain->getGhostPoints();
   auto left_it = data.begin();
   auto right_it = --data.end();
 
-  double **left = left_it->getData();
-  double **right = right_it->getData();
+  double **left;
+  double **right;
+
+  if(!intermediate){
+    left = left_it->getData();
+    right = right_it->getData();
+  }
+  else{
+    left = left_it->getIntermediateData();
+    right = right_it->getIntermediateData();
+  }
   unsigned int nr = right_it->getGrid().getSize();
 
   // For now, we'll just apply fixed boundaries.
@@ -206,13 +216,13 @@ void FirstOrderWave::applyBoundaries(){
     //right[nr - 1 - i][U_PI] = left[nb + i][U_PI];
     //right[nr - 1 - i][U_CHI] = left[nb + i][U_CHI];
 
-    left[i][U_PHI] = 0.0;
-    left[i][U_PI] = 0.0;
-    left[i][U_CHI] = 0.0;
+    left[i][U_PHI] = left[nb][U_PHI];
+    left[i][U_PI] = left[nb][U_PI];
+    left[i][U_CHI] = left[nb][U_CHI];
 
-    right[nr - 1 - i][U_PHI] = 0.0;
-    right[nr - 1 - i][U_PI] = 0.0;
-    right[nr - 1 - i][U_CHI] = 0.0;
+    right[nr - 1 - i][U_PHI] = right[nr - nb - 1][U_PHI];
+    right[nr - 1 - i][U_PI] = right[nr - nb - 1][U_PI];
+    right[nr - 1 - i][U_CHI] = right[nr - nb - 1][U_CHI];
   }
 }
 // }}}
@@ -225,6 +235,18 @@ void FirstOrderWave::initData(){
   switch(wp->getInitialConditions()){
     case WaveParameters::GAUSSIAN:
       applyGaussian();
+      break;
+    case WaveParameters::FLAT:
+      for(auto it = data.begin(); it != data.end(); ++it){
+        const double *x = it->getGrid().getPoints();
+        unsigned int nx = it->getGrid().getSize();
+        double **u = it->getData();
+        for(unsigned int i = 0; i < nx; i++){
+          u[i][U_PHI] = 0.0;
+          u[i][U_PI] = 1.0;
+          u[i][U_CHI] = 0.0;
+        }
+      }
       break;
     default:
       std::cerr << "Warning: unrecognized initial conditions selected. Defaulting to Gaussian.\n";

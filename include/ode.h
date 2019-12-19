@@ -61,8 +61,10 @@ class ODE{
     /**
      * Apply boundary conditions to the data. The default version assumes that
      * it is a true set of ODEs, so no boundaries are necessary.
+     * @param intermediate - Whether we're modifying the intermediate dataset
+     *                       or the original dataset.
      */
-    virtual void applyBoundaries() {};
+    virtual void applyBoundaries(bool intermediate) {};
 
     /**
      * Clear and reallocate all the data.

@@ -7,6 +7,7 @@ class WaveParameters : public Parameters {
   public:
     enum InitialConditions{
       GAUSSIAN,
+      FLAT,
     };
 
     WaveParameters() : Parameters(1){

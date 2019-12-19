@@ -10,7 +10,6 @@ Result RK4::calcStage(void (*rhs)(const Grid&, double**,double**), double *data0
       rhs(grid, data0, dest);
       for(int i = 0; i < shp; i++){
         for(int m = 0; m < vars; m++){
-          //dest[i][m] *= dt;
           dataint[i][m] = data0[i][m] + 0.5*dest[i][m]*dt;
         }
       }
@@ -20,7 +19,6 @@ Result RK4::calcStage(void (*rhs)(const Grid&, double**,double**), double *data0
       rhs(grid, dataint, dest);
       for(int i = 0; i < shp; i++){
         for(int m = 0; m < vars; m++){
-          //dest[i][m] *= dt;
           dataint[i][m] = data0[i][m] + 0.5*dest[i][m]*dt;
         }
       }
@@ -30,7 +28,6 @@ Result RK4::calcStage(void (*rhs)(const Grid&, double**,double**), double *data0
       rhs(grid, dataint, dest);
       for(int i = 0; i < shp; i++){
         for(int m = 0; m < vars; m++){
-          //dest[i][m] *= dt;
           dataint[i][m] = data0[i][m] + dest[i][m]*dt;
         }
       }
@@ -38,11 +35,6 @@ Result RK4::calcStage(void (*rhs)(const Grid&, double**,double**), double *data0
       break;
     case 3:
       rhs(grid, dataint, dest);
-      for(int i = 0; i < shp; i++){
-        for(int m = 0; m < vars; m++){
-          //dest[i][m] *= dt;
-        }
-      }
       return SUCCESS;
       break;
     default:

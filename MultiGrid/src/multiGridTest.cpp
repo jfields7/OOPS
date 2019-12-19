@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <output.h>
 #include <firstorderwave.h>
+#include <waveparameters.h>
 
 const double EPSILON = 1.e-15;
 const double sigma1st = 0.0;
@@ -17,12 +18,13 @@ int main(int argc, char* argv[]){
   // Construct a domain and a set of grids.
   Domain domain = Domain();
   domain.setGhostPoints(3);
+  domain.setCFL(0.25);
   int N0 = 65;
   int N = N0 - 1;
   int nb = domain.getGhostPoints();
   
   int ngrids = 1;
-  while (N > 2*nb){
+  while (N > 4*nb){
     N = N >> 1;
     if(N >= 4*nb){
       ngrids++;
@@ -52,13 +54,16 @@ int main(int argc, char* argv[]){
   // Now we need to try to construct our ODE system.
   RK4 rk4 = RK4();
   FirstOrderWave ode = FirstOrderWave(domain, rk4);
+  WaveParameters *wp = (WaveParameters*) ode.getParameters();
+  wp->setInitialConditions(WaveParameters::GAUSSIAN);
   ode.initData();
 
   double ti = 0.0;
   double tf = 10.0;
-  double dt = domain.getCFL()*dx_grid;
+  double dt = domain.getCFL()*domain.getGrids().begin()->getSpacing();
   unsigned int M = (tf - ti)/dt;
   ode.dump_csv("phi00000.csv", 0, 0);
+  //ode.dump_csv("chi00000.csv", 0, 2);
   for(unsigned int i = 0; i < M; i++){
     double t = (i + 1)*dt;
     ode.evolveStep(dt);
@@ -66,6 +71,8 @@ int main(int argc, char* argv[]){
     char buffer[12];
     sprintf(buffer, "phi%05d.csv",i + 1);
     ode.dump_csv(buffer, t, 0);
+    //sprintf(buffer, "chi%05d.csv",i + 1);
+    //ode.dump_csv(buffer, t, 2);
   }
 
   return 0;

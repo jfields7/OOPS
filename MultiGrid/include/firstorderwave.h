@@ -14,7 +14,7 @@ class FirstOrderWave : public ODE {
 
     void applyGaussian();
   protected:
-    virtual void applyBoundaries();
+    virtual void applyBoundaries(bool intermediate);
 
     virtual void rhs(const Grid& grid, double **u, double **dudt);
 

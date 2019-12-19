@@ -60,12 +60,14 @@ Result ODE::evolveStep(double dt){
 
     // Perform the grid exchange and apply boundary conditions.
     performGridExchange();
-    applyBoundaries();
+    applyBoundaries(true);
   }
 
   for(auto it = data.begin(); it != data.end(); ++it){
     solver->combineStages(it->getWorkData(), it->getData(), it->getGrid(), dt, nEqs);
   }
+  performGridExchange();
+  applyBoundaries(false);
 
   // Loop over all the data sets.
   /*for(auto it = data.begin(); it != data.end(); ++it){

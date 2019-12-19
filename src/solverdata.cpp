@@ -14,6 +14,8 @@ SolverData::SolverData(unsigned int eqCount, unsigned int nStages, const Grid& g
     data_int = new double*[nx];
     for(int i = 0; i < nx; i++){
       data[i] = new double[eqCount];
+    }
+    for(int i = 0; i < nx; i++){
       data_int[i] = new double[eqCount];
     }
     work = new double**[nStages];
@@ -34,7 +36,7 @@ SolverData::SolverData(unsigned int eqCount, unsigned int nStages, const Grid& g
 }
 
 SolverData::SolverData(const SolverData& other): mGrid(other.getGrid()){
-
+  std::cout << "SolverData copy constructor: This shouldn't be getting called, but it is.\n";
 }
 
 SolverData::~SolverData(){

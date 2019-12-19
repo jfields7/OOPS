@@ -12,7 +12,7 @@ class ODE;
  *
  * Class name: RK4
  * Author: Jacob Fields
- * Date Modified: 10-23-2019
+ * Date Modified: 12-16-2019
  * 
  * Description: This defines an ODE solver that implements the classic
  *              4th-order Runge-Kutta algorithm.
