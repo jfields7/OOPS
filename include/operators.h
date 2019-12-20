@@ -99,6 +99,17 @@ namespace operators{
     return (-3.0*u[0] + 12.0*u[1] - 19.0*u[2] + 15.0*u[3] - 6.0*u[4] + u[5])*48.0/(49.0*64.0*dx);
   }
 
+  /**
+   * A lower-order (2nd?) centered different operator for Kreiss-Oliger dissipation.
+   * @param u: The five-point stencil containing the points to use to calculate the
+   *           derivative operator.
+   * @param dx: The grid spacing to use, which is assumed to be uniform in the stencil.
+   * @return: The KO dissipation at u[2] as a double.
+   */
+  inline double ko_dx_2(const double u[5], const double dx){
+    return (u[0] - 4.0*u[1] + 6.0*u[2] - 4.0*u[3] + u[4])*dx;
+  }
+
     
   // }}}
 };
