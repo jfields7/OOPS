@@ -218,11 +218,13 @@ void FirstOrderWave::applyBoundaries(bool intermediate){
 
     left[i][U_PHI] = left[nb][U_PHI];
     left[i][U_PI] = left[nb][U_PI];
-    left[i][U_CHI] = left[nb][U_CHI];
+    //left[i][U_CHI] = left[nb][U_CHI];
+    left[i][U_CHI] = 0.0;
 
     right[nr - 1 - i][U_PHI] = right[nr - nb - 1][U_PHI];
     right[nr - 1 - i][U_PI] = right[nr - nb - 1][U_PI];
-    right[nr - 1 - i][U_CHI] = right[nr - nb - 1][U_CHI];
+    //right[nr - 1 - i][U_CHI] = right[nr - nb - 1][U_CHI];
+    right[nr - 1 - i][U_CHI] = 0.0;
   }
 }
 // }}}

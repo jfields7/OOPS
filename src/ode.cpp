@@ -131,7 +131,9 @@ void ODE::exchangeGhostPoints(const SolverData& data1, const SolverData& data2){
   // between the grids and complain if that's not the case.
   if(fabs((dx1*2.0 - dx2)/dx2) < 1e-14){
     // The left grid is finer than the right grid.
-    for(unsigned int i = 0; i < nb; i++){
+    // Note the nb + 1. We also need to copy the one physical point so that they stay
+    // consistent. We use the one from the more refined grid.
+    for(unsigned int i = 0; i < nb + 1; i++){
       for(unsigned int j = 0; j < nEqs; j++){
         // Copy the exact point from u1 into the ghost region of u2.
         u2[i][j] = u1[shp1 - 1 - 3*nb + 2*i][j];
@@ -141,10 +143,13 @@ void ODE::exchangeGhostPoints(const SolverData& data1, const SolverData& data2){
   }
   else if(fabs((dx1 - 2.0*dx2)/dx2) < 1e-14){
     // The right grid is finer than the left grid.
-    for(unsigned int i = 0; i < nb; i++){
+    //for(unsigned int i = 0; i < nb; i++){
+    // Note the nb + 1. We also need to copy the one physical point so that they stay
+    // consistent. We use the one from the more refined grid.
+    for(unsigned int i = 0; i < nb + 1; i++){
       for(unsigned int j = 0; j < nEqs; j++){
         // Copy the exact point from u2 into the ghost region of u1.
-        u1[shp1 - nb + i][j] = u2[nb + 2*i][j];
+        u1[shp1 - nb - 1 + i][j] = u2[nb + 2*i][j];
       }
     }
     interpolateRight(data1, data2);
@@ -197,7 +202,7 @@ void ODE::interpolateRight(const SolverData& datal, const SolverData& datar){
       }
       else{
         ur[nb - 1 - i][j] = interp::cubicInterpCenter(ul[shpl - nb - 3 - i/2][j],
-                                                      ul[shpl - nb - 1 - i/2][j],
+                                                      ul[shpl - nb - 2 - i/2][j],
                                                       ur[nb - i][j],
                                                       ur[nb + 2 - i][j]);
       }
