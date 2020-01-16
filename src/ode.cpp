@@ -134,7 +134,7 @@ void ODE::exchangeGhostPoints(const SolverData& data1, const SolverData& data2){
     for(unsigned int i = 0; i < nb; i++){
       for(unsigned int j = 0; j < nEqs; j++){
         // Copy the exact point from u1 into the ghost region of u2.
-        u2[i][j] = u1[shp1 - 3*nb + 2*i][j];
+        u2[i][j] = u1[shp1 - 1 - 3*nb + 2*i][j];
       }
     }
     interpolateLeft(data1, data2);
@@ -168,11 +168,11 @@ void ODE::interpolateLeft(const SolverData& datal, const SolverData& datar){
       // If we're on an even ghost point, we don't need to interpolate. This corresponds to an
       // odd index because counting starts at 0, hence the screwy math.
       if( i & 1 == 1){
-        ul[shpl - nb + i][j] = ur[nb + (i + 1)/2 - 1][j];
+        ul[shpl - nb + i][j] = ur[nb + (i + 1)/2][j];
       }
       else{
-        ul[shpl - nb + i][j] = interp::cubicInterpCenter(ul[shpl - nb + i - 1][j], 
-                                                         ul[shpl - nb + i - 3][j],
+        ul[shpl - nb + i][j] = interp::cubicInterpCenter(ul[shpl - nb + i - 3][j], 
+                                                         ul[shpl - nb + i - 1][j],
                                                          ur[nb + i/2 + 1][j],
                                                          ur[nb + i/2 + 2][j]);
       }

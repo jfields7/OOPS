@@ -31,7 +31,8 @@ int main(int argc, char* argv[]){
     }
   }
   // Debugging only
-  ngrids = 1;
+  //ngrids = 1;
+
   double dx_grid = (domain.getBounds()[1] - domain.getBounds()[0])/ngrids;
   for(int i = 0; i < ngrids; i++){
     double bounds[2] = {dx_grid * i, dx_grid * (i + 1)};
@@ -59,7 +60,7 @@ int main(int argc, char* argv[]){
   ode.initData();
 
   double ti = 0.0;
-  double tf = 10.0;
+  double tf = 5.0;
   double dt = domain.getCFL()*domain.getGrids().begin()->getSpacing();
   unsigned int M = (tf - ti)/dt;
   ode.dump_csv("phi00000.csv", 0, 0);
