@@ -7,6 +7,7 @@
 #include "rk4.h"
 #include "solverdata.h"
 #include "parameters.h"
+#include "interpolator.h"
 #include <set>
 
 /**
@@ -45,6 +46,12 @@ class ODE{
      * The solver to use for this system of ODEs.
      */
     Solver *solver;
+
+    /**
+     * The interpolation method to use for multiresolution grids.
+     */
+    Interpolator *interpolator;
+    
 
     /**
      * The maximum grid spacing on the domain in question.
@@ -130,6 +137,13 @@ class ODE{
      * @returns SUCCESS or an error message, usually BAD_ALLOC.
      */
     Result setSolver(Solver *solver);
+
+    /**
+     * Set the interpolation method for this problem.
+     * @param interp - the new interpolator to use.
+     * @returns SUCCESS or an error message, usually BAD_ALLOC.
+     */
+    Result setInterpolator(Interpolator *interp);
 
     /**
      * The evolution function for a single step. We make this virtual because

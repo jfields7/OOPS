@@ -9,6 +9,7 @@ ODE::ODE(const unsigned int n, const unsigned int id) : nEqs(n), pId(id){
   params = nullptr;
   solver = nullptr;
   max_dx = 0.0;
+  interpolator = nullptr;
 }
 
 ODE::~ODE(){
@@ -44,6 +45,15 @@ Result ODE::setSolver(Solver *s){
 
   return reallocateData();
 }
+// }}}
+
+// setInterpolator {{{
+
+Result ODE::setInterpolator(Interpolator* interp){
+  interpolator = interp;
+  return SUCCESS;
+}
+
 // }}}
 
 // evolveStep {{{
@@ -168,6 +178,8 @@ void ODE::interpolateLeft(const SolverData& datal, const SolverData& datar){
   double **ur = datar.getData();
   unsigned int nb = domain->getGhostPoints();
   unsigned int shpl = datal.getGrid().getSize();
+  double *stencil = interpolator->getStencil();
+  unsigned int nStart = interpolator->getStencilSize()/2;
   for(unsigned int i = 0; i < nb; i++){
     for(unsigned int j = 0; j < nEqs; j++){
       // If we're on an even ghost point, we don't need to interpolate. This corresponds to an
@@ -176,10 +188,19 @@ void ODE::interpolateLeft(const SolverData& datal, const SolverData& datar){
         ul[shpl - nb + i][j] = ur[nb + (i + 1)/2][j];
       }
       else{
-        ul[shpl - nb + i][j] = interp::cubicInterpCenter(ul[shpl - nb + i - 3][j], 
+        /*ul[shpl - nb + i][j] = interp::cubicInterpCenter(ul[shpl - nb + i - 3][j], 
                                                          ul[shpl - nb + i - 1][j],
                                                          ur[nb + i/2 + 1][j],
-                                                         ur[nb + i/2 + 2][j]);
+                                                         ur[nb + i/2 + 2][j]);*/
+        // Fill in the stencil. Use the left points from the finer grid and the right
+        // points from the coarser grid. This makes sure that we don't run out of points.
+        for(int m = -nStart; m < 0; m++){
+          stencil[m + nStart] = ul[shpl - nb + i + 1 + 2*m][j];
+        }
+        for(int m = 0; m < nStart; m++){
+          stencil[m + nStart] = ur[nb + i/2 + 1 + m][j];
+        }
+        ul[shpl - nb + i][j] = interpolator->interpolate();
       }
     }
   }
@@ -193,6 +214,8 @@ void ODE::interpolateRight(const SolverData& datal, const SolverData& datar){
   double **ur = datar.getData();
   unsigned int nb = domain->getGhostPoints();
   unsigned int shpl = datal.getGrid().getSize();
+  double *stencil = interpolator->getStencil();
+  unsigned int nStart = interpolator->getStencilSize()/2;
   for(unsigned int i = 0; i < nb; i++){
     for(unsigned int j = 0; j < nEqs; j++){
       // If we're on an even ghost point, we don't need to interpolate. This corresponds to an
@@ -201,10 +224,19 @@ void ODE::interpolateRight(const SolverData& datal, const SolverData& datar){
         ur[nb - 1 - i][j] = ul[shpl - nb - 1 - (i + 1)/2][j];
       }
       else{
-        ur[nb - 1 - i][j] = interp::cubicInterpCenter(ul[shpl - nb - 3 - i/2][j],
+        /*ur[nb - 1 - i][j] = interp::cubicInterpCenter(ul[shpl - nb - 3 - i/2][j],
                                                       ul[shpl - nb - 2 - i/2][j],
                                                       ur[nb - i][j],
-                                                      ur[nb + 2 - i][j]);
+                                                      ur[nb + 2 - i][j]);*/
+        // Fill in the stencil. Use the right points from the finer grid and the left
+        // points from the coarser grid. This makes sure that we don't run out of points.
+        for(int m = -nStart; m < 0; m++){
+          stencil[m + nStart] = ul[shpl - nb - 1 + m - i/2][j];
+        }
+        for(int m = 0; m < nStart; m++){
+          stencil[m + nStart] = ur[nb + 2*m - i][j];
+        }
+        ur[nb - 1 - i][j] = interpolator->interpolate();
       }
     }
   }
