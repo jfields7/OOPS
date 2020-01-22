@@ -20,6 +20,7 @@ set(GRID_INCLUDE_FILES
     include/parameters.h
     include/interpolator.h
     include/cubicinterpolator.h
+    include/polynomialinterpolator.h
    )
 
 set(GRID_SOURCE_FILES
@@ -31,6 +32,7 @@ set(GRID_SOURCE_FILES
     src/cubic.cpp
     src/interpolator.cpp
     src/cubicinterpolator.cpp
+    src/polynomialinterpolator.cpp
    )
 
 set(TEST_SOURCE_FILES

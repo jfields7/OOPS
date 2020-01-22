@@ -8,6 +8,7 @@
 #include <firstorderwave.h>
 #include <waveparameters.h>
 #include <cubicinterpolator.h>
+#include <polynomialinterpolator.h>
 
 const double EPSILON = 1.e-15;
 const double sigma1st = 0.0;
@@ -56,7 +57,8 @@ int main(int argc, char* argv[]){
 
   // Now we need to try to construct our ODE system.
   RK4 rk4 = RK4();
-  CubicInterpolator interpolator = CubicInterpolator();
+  //CubicInterpolator interpolator = CubicInterpolator();
+  PolynomialInterpolator interpolator = PolynomialInterpolator(4);
   FirstOrderWave ode = FirstOrderWave(domain, rk4);
   ode.setInterpolator(&interpolator);
   WaveParameters *wp = (WaveParameters*) ode.getParameters();

@@ -188,10 +188,6 @@ void ODE::interpolateLeft(const SolverData& datal, const SolverData& datar){
         ul[shpl - nb + i][j] = ur[nb + (i + 1)/2][j];
       }
       else{
-        /*ul[shpl - nb + i][j] = interp::cubicInterpCenter(ul[shpl - nb + i - 3][j], 
-                                                         ul[shpl - nb + i - 1][j],
-                                                         ur[nb + i/2 + 1][j],
-                                                         ur[nb + i/2 + 2][j]);*/
         // Fill in the stencil. Use the left points from the finer grid and the right
         // points from the coarser grid. This makes sure that we don't run out of points.
         for(int m = -nStart; m < 0; m++){
@@ -224,10 +220,6 @@ void ODE::interpolateRight(const SolverData& datal, const SolverData& datar){
         ur[nb - 1 - i][j] = ul[shpl - nb - 1 - (i + 1)/2][j];
       }
       else{
-        /*ur[nb - 1 - i][j] = interp::cubicInterpCenter(ul[shpl - nb - 3 - i/2][j],
-                                                      ul[shpl - nb - 2 - i/2][j],
-                                                      ur[nb - i][j],
-                                                      ur[nb + 2 - i][j]);*/
         // Fill in the stencil. Use the right points from the finer grid and the left
         // points from the coarser grid. This makes sure that we don't run out of points.
         for(int m = -nStart; m < 0; m++){
