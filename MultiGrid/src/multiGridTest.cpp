@@ -37,9 +37,10 @@ int main(int argc, char* argv[]){
 
   double dx_grid = (domain.getBounds()[1] - domain.getBounds()[0])/ngrids;
   for(int i = 0; i < ngrids; i++){
-    //double bounds[2] = {dx_grid * i, dx_grid * (i + 1)};
-    double bounds[2] = {1.0 - dx_grid * (i + 1), 1.0 - dx_grid * i};
+    double bounds[2] = {dx_grid * i, dx_grid * (i + 1)};
+    //double bounds[2] = {1.0 - dx_grid * (i + 1), 1.0 - dx_grid * i};
     domain.addGrid(bounds, ((N0 - 1) >> i) + 1);
+    //domain.addGrid(bounds, N0);
   }
 
   // First, let's confirm that the grids are all placed correctly.

@@ -8,27 +8,27 @@ Result RK4::calcStage(void (*rhs)(const Grid&, double**,double**), double *data0
   switch(stage){
     case 0:
       rhs(grid, data0, dest);
-      for(int i = 0; i < shp; i++){
-        for(int m = 0; m < vars; m++){
-          dataint[i][m] = data0[i][m] + 0.5*dest[i][m]*dt;
+      for(int m = 0; m < vars; m++){
+        for(int i = 0; i < shp; i++){
+          dataint[m][i] = data0[m][i] + 0.5*dest[m][i]*dt;
         }
       }
       return SUCCESS;
       break;
     case 1:
       rhs(grid, dataint, dest);
-      for(int i = 0; i < shp; i++){
-        for(int m = 0; m < vars; m++){
-          dataint[i][m] = data0[i][m] + 0.5*dest[i][m]*dt;
+      for(int m = 0; m < vars; m++){
+        for(int i = 0; i < shp; i++){
+          dataint[m][i] = data0[m][i] + 0.5*dest[m][i]*dt;
         }
       }
       return SUCCESS;
       break;
     case 2:
       rhs(grid, dataint, dest);
-      for(int i = 0; i < shp; i++){
-        for(int m = 0; m < vars; m++){
-          dataint[i][m] = data0[i][m] + dest[i][m]*dt;
+      for(int m = 0; m < vars; m++){
+        for(int i = 0; i < shp; i++){
+          dataint[m][i] = data0[m][i] + dest[m][i]*dt;
         }
       }
       return SUCCESS;
@@ -50,27 +50,27 @@ Result RK4::calcStage(ODE *ode, double *data0[], double *dataint[], double *dest
   switch(stage){
     case 0:
       ode->rhs(grid, data0, dest);
-      for(int i = 0; i < shp; i++){
-        for(int m = 0; m < vars; m++){
-          dataint[i][m] = data0[i][m] + 0.5*dest[i][m]*dt;
+      for(int m = 0; m < vars; m++){
+        for(int i = 0; i < shp; i++){
+          dataint[m][i] = data0[m][i] + 0.5*dest[m][i]*dt;
         }
       }
       return SUCCESS;
       break;
     case 1:
       ode->rhs(grid, dataint, dest);
-      for(int i = 0; i < shp; i++){
-        for(int m = 0; m < vars; m++){
-          dataint[i][m] = data0[i][m] + 0.5*dest[i][m]*dt;
+      for(int m = 0; m < vars; m++){
+        for(int i = 0; i < shp; i++){
+          dataint[m][i] = data0[m][i] + 0.5*dest[m][i]*dt;
         }
       }
       return SUCCESS;
       break;
     case 2:
       ode->rhs(grid, dataint, dest);
-      for(int i = 0; i < shp; i++){
-        for(int m = 0; m < vars; m++){
-          dataint[i][m] = data0[i][m] + dest[i][m]*dt;
+      for(int m = 0; m < vars; m++){
+        for(int i = 0; i < shp; i++){
+          dataint[m][i] = data0[m][i] + dest[m][i]*dt;
         }
       }
       return SUCCESS;
@@ -95,9 +95,9 @@ Result RK4::combineStages(double **data[], double *dest[], const Grid& grid, dou
   double error;
   double term;
   double old;
-  for(int i = 0; i < shp; i++){
-    for(int m = 0; m < vars; m++){
-      dest[i][m] = dest[i][m] + ((k1[i][m] + 2.0*k2[i][m]) + (2.0*k3[i][m] + k4[i][m]))*dt/6.0;
+  for(int m = 0; m < vars; m++){
+    for(int i = 0; i < shp; i++){
+      dest[m][i] = dest[m][i] + ((k1[m][i] + 2.0*k2[m][i]) + (2.0*k3[m][i] + k4[m][i]))*dt/6.0;
     }
   }
 }

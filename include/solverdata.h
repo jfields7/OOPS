@@ -60,21 +60,21 @@ class SolverData{
 
   // Inline getter functions {{{
   /**
-   * Get the array containing the data. This is stored as [points][vars].
+   * Get the array containing the data. This is stored as [vars][points].
    */
   inline double** getData() const{
     return data;
   }
 
   /**
-   * Get the array containing the intermediate data. This is stored as [points][vars].
+   * Get the array containing the intermediate data. This is stored as [vars][points].
    */
   inline double** getIntermediateData() const{
     return data_int;
   }
 
   /**
-   * Get the array containing the work data. This is stored as [stage][points][vars].
+   * Get the array containing the work data. This is stored as [stage][vars][points].
    */
   inline double*** getWorkData() const{
     return work;

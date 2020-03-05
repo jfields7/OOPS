@@ -10,19 +10,19 @@ SolverData::SolverData(unsigned int eqCount, unsigned int nStages, const Grid& g
   
   // Try to allocate memory for the arrays.
   try{
-    data = new double*[nx];
-    data_int = new double*[nx];
-    for(int i = 0; i < nx; i++){
-      data[i] = new double[eqCount];
+    data = new double*[eqCount];
+    data_int = new double*[eqCount];
+    for(int i = 0; i < eqCount; i++){
+      data[i] = new double[nx];
     }
-    for(int i = 0; i < nx; i++){
-      data_int[i] = new double[eqCount];
+    for(int i = 0; i < eqCount; i++){
+      data_int[i] = new double[nx];
     }
     work = new double**[nStages];
     for(int i = 0; i < nStages; i++){
-      work[i] = new double*[nx];
-      for(int j = 0; j < nx; j++){
-        work[i][j] = new double[eqCount];
+      work[i] = new double*[eqCount];
+      for(int j = 0; j < eqCount; j++){
+        work[i][j] = new double[nx];
       }
     }
   }
@@ -41,12 +41,12 @@ SolverData::SolverData(const SolverData& other): mGrid(other.getGrid()){
 
 SolverData::~SolverData(){
   for(int i = 0; i < nStages; i++){
-    for(int j = 0; j < mGrid.getSize(); j++){
+    for(int j = 0; j < nEq; j++){
       delete[] work[i][j];
     }
     delete[] work[i];
   }
-  for(int i = 0; i < mGrid.getSize(); i++){
+  for(int i = 0; i < nEq; i++){
     delete[] data_int[i];
     delete[] data[i];
   }

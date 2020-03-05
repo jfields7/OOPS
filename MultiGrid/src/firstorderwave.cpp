@@ -43,7 +43,7 @@ void FirstOrderWave::rhs(const Grid& grid, double **u, double **dudt){
   // full five-point stencil.
 
   // Leftmost point
-  dudt[0][U_PHI] = u[0][U_PI];
+  /*dudt[0][U_PHI] = u[0][U_PI];
   stencil3[0] = u[0][U_CHI];
   stencil3[1] = u[1][U_CHI];
   stencil3[2] = u[2][U_CHI];
@@ -51,10 +51,19 @@ void FirstOrderWave::rhs(const Grid& grid, double **u, double **dudt){
   stencil3[0] = u[0][U_PI];
   stencil3[1] = u[1][U_PI];
   stencil3[2] = u[2][U_PI];
-  dudt[0][U_CHI] = operators::dx_2off(stencil3, dx);
+  dudt[0][U_CHI] = operators::dx_2off(stencil3, dx);*/
+  dudt[U_PHI][0] = u[U_PI][0];
+  stencil3[0] = u[U_CHI][0];
+  stencil3[1] = u[U_CHI][1];
+  stencil3[2] = u[U_CHI][2];
+  dudt[U_PI][0] = operators::dx_2off(stencil3, dx);
+  stencil3[0] = u[U_PI][0];
+  stencil3[1] = u[U_PI][1];
+  stencil3[2] = u[U_PI][2];
+  dudt[U_CHI][0] = operators::dx_2off(stencil3, dx);
 
   // Second leftmost point
-  dudt[1][U_PHI] = u[1][U_PI];
+  /*dudt[1][U_PHI] = u[1][U_PI];
   stencil3[0] = u[0][U_CHI];
   stencil3[1] = u[1][U_CHI];
   stencil3[2] = u[2][U_CHI];
@@ -62,44 +71,53 @@ void FirstOrderWave::rhs(const Grid& grid, double **u, double **dudt){
   stencil3[0] = u[0][U_PI];
   stencil3[1] = u[1][U_PI];
   stencil3[2] = u[2][U_PI];
-  dudt[1][U_CHI] = operators::dx_2(stencil3, dx);
+  dudt[1][U_CHI] = operators::dx_2(stencil3, dx);*/
+  dudt[U_PHI][1] = u[U_PI][1];
+  stencil3[0] = u[U_CHI][0];
+  stencil3[1] = u[U_CHI][1];
+  stencil3[2] = u[U_CHI][2];
+  dudt[U_PI][1] = operators::dx_2(stencil3, dx);
+  stencil3[0] = u[U_PI][0];
+  stencil3[1] = u[U_PI][1];
+  stencil3[2] = u[U_PI][2];
+  dudt[U_CHI][1] = operators::dx_2(stencil3, dx);
 
   // Now loop through all the interior points.
   for(int i = 2; i < shp - 2; i++){
-    dudt[i][U_PHI] = u[i][U_PI];
+    dudt[U_PHI][i] = u[U_PI][i];
 
     for(int j = 0; j < 5; j++){
-      stencil5[j] = u[i - 2 + j][U_CHI];
+      stencil5[j] = u[U_CHI][i - 2 + j];
     }
-    dudt[i][U_PI] = operators::dx_4(stencil5, dx);
+    dudt[U_PI][i] = operators::dx_4(stencil5, dx);
 
     for(int j = 0; j < 5; j++){
-      stencil5[j] = u[i - 2 + j][U_PI];
+      stencil5[j] = u[U_PI][i - 2 + j];
     }
-    dudt[i][U_CHI] = operators::dx_4(stencil5, dx);
+    dudt[U_CHI][i] = operators::dx_4(stencil5, dx);
   }
 
   // Second rightmost point
-  dudt[shp - 2][U_PHI] = u[shp - 2][U_PI];
-  stencil3[0] = u[shp - 3][U_CHI];
-  stencil3[1] = u[shp - 2][U_CHI];
-  stencil3[2] = u[shp - 1][U_CHI];
-  dudt[shp - 2][U_PI] = operators::dx_2(stencil3, dx);
-  stencil3[0] = u[shp - 3][U_PI];
-  stencil3[1] = u[shp - 2][U_PI];
-  stencil3[2] = u[shp - 1][U_PI];
-  dudt[shp - 2][U_CHI] = operators::dx_2(stencil3, dx);
+  dudt[U_PHI][shp - 2] = u[U_PI][shp - 2];
+  stencil3[0] = u[U_CHI][shp - 3];
+  stencil3[1] = u[U_CHI][shp - 2];
+  stencil3[2] = u[U_CHI][shp - 1];
+  dudt[U_PI][shp - 2] = operators::dx_2(stencil3, dx);
+  stencil3[0] = u[U_PI][shp - 3];
+  stencil3[1] = u[U_PI][shp - 2];
+  stencil3[2] = u[U_PI][shp - 1];
+  dudt[U_CHI][shp - 2] = operators::dx_2(stencil3, dx);
 
   // Rightmost point
-  dudt[shp - 1][U_PHI] = u[shp - 1][U_PI];
-  stencil3[2] = u[shp - 3][U_CHI];
-  stencil3[1] = u[shp - 2][U_CHI];
-  stencil3[0] = u[shp - 1][U_CHI];
-  dudt[shp - 1][U_PI] = operators::dx_2off(stencil3, dx);
-  stencil3[2] = u[shp - 3][U_PI];
-  stencil3[1] = u[shp - 2][U_PI];
-  stencil3[0] = u[shp - 1][U_PI];
-  dudt[shp - 1][U_CHI] = operators::dx_2off(stencil3, dx);
+  dudt[U_PHI][shp - 1] = u[U_PI][shp - 1];
+  stencil3[2] = u[U_CHI][shp - 3];
+  stencil3[1] = u[U_CHI][shp - 2];
+  stencil3[0] = u[U_CHI][shp - 1];
+  dudt[U_PI][shp - 1] = operators::dx_2off(stencil3, dx);
+  stencil3[2] = u[U_PI][shp - 3];
+  stencil3[1] = u[U_PI][shp - 2];
+  stencil3[0] = u[U_PI][shp - 1];
+  dudt[U_CHI][shp - 1] = operators::dx_2off(stencil3, dx);
 
   // We'll need to do something for Kreiss-Oliger dissipation.
   //applyKODiss(grid, u, dudt);
@@ -127,59 +145,59 @@ void FirstOrderWave::applyKODiss(const Grid& grid, double **u, double **dudt){
   // Apply KO dissipation to the leftmost point.
   for(unsigned int m = 0; m < nEqs; m++){
     for(unsigned int j = 0; j < 4; j++){
-      stencil4[j] = u[j][m];
+      stencil4[j] = u[m][j];
     }
-    dudt[0][m] += koSigma * operators::ko_dx_off1(stencil4, dx);
+    dudt[m][0] += koSigma * operators::ko_dx_off1(stencil4, dx);
   }
 
   // Apply KO dissipation to the second leftmost point.
   for(unsigned int m = 0; m < nEqs; m++){
     for(unsigned int j = 0; j < 5; j++){
-      stencil5[j] = u[j][m];
+      stencil5[j] = u[m][j];
     }
-    dudt[1][m] += koSigma * operators::ko_dx_off2(stencil5, dx);
+    dudt[m][1] += koSigma * operators::ko_dx_off2(stencil5, dx);
   }
 
   // Apply KO dissipation to the third leftmost point.
   for(unsigned int m = 0; m < nEqs; m++){
     for(unsigned int j = 0; j < 6; j++){
-      stencil6[j] = u[j][m];
+      stencil6[j] = u[m][j];
     }
-    dudt[2][m] += koSigma * operators::ko_dx_off3(stencil6, dx);
+    dudt[m][2] += koSigma * operators::ko_dx_off3(stencil6, dx);
   }
 
   // Apply KO dissipation to the interior points.
   for(unsigned int i = 3; i < shp - 3; i++){
     for(unsigned int m = 0; m < nEqs; m++){
       for(unsigned int j = 0; j < 7; j++){
-        stencil7[j] = u[i - 3 + j][m];
+        stencil7[j] = u[m][i - 3 + j];
       }
-      dudt[i][m] += koSigma * operators::ko_dx(stencil7, dx);
+      dudt[m][i] += koSigma * operators::ko_dx(stencil7, dx);
     }
   }
 
   // Apply KO dissipation to the third rightmost point.
   for(unsigned int m = 0; m < nEqs; m++){
     for(unsigned int j = 0; j < 6; j++){
-      stencil6[j] = u[shp - 1 - j][m];
+      stencil6[j] = u[j][shp - 1 - j];
     }
-    dudt[shp - 3][m] += koSigma * operators::ko_dx_off3(stencil6, dx);
+    dudt[m][shp - 3] += koSigma * operators::ko_dx_off3(stencil6, dx);
   }
 
   // Apply KO dissipation to the second rightmost point.
   for(unsigned int m = 0; m < nEqs; m++){
     for(unsigned int j = 0; j < 5; j++){
-      stencil5[j] = u[shp - 1 - j][m];
+      stencil5[j] = u[m][shp - 1 - j];
     }
-    dudt[shp - 2][m] += koSigma * operators::ko_dx_off2(stencil5, dx);
+    dudt[m][shp - 2] += koSigma * operators::ko_dx_off2(stencil5, dx);
   }
 
   // Apply KO dissipation to the rightmost point.
   for(unsigned int m = 0; m < nEqs; m++){
     for(unsigned int j = 0; j < 4; j++){
-      stencil4[j] = u[shp - 1 - j][m];
+      stencil4[j] = u[m][shp - 1 - j];
     }
-    dudt[shp - 1][m] += koSigma * operators::ko_dx_off1(stencil4, dx);
+    dudt[m][shp - 1] += koSigma * operators::ko_dx_off1(stencil4, dx);
   }
 }
 // }}}
@@ -216,15 +234,15 @@ void FirstOrderWave::applyBoundaries(bool intermediate){
     //right[nr - 1 - i][U_PI] = left[nb + i][U_PI];
     //right[nr - 1 - i][U_CHI] = left[nb + i][U_CHI];
 
-    left[i][U_PHI] = left[nb][U_PHI];
-    left[i][U_PI] = left[nb][U_PI];
+    left[U_PHI][i] = left[U_PHI][nb];
+    left[U_PI][i] = left[U_PI][nb];
     //left[i][U_CHI] = left[nb][U_CHI];
-    left[i][U_CHI] = 0.0;
+    left[U_CHI][i] = 0.0;
 
-    right[nr - 1 - i][U_PHI] = right[nr - nb - 1][U_PHI];
-    right[nr - 1 - i][U_PI] = right[nr - nb - 1][U_PI];
+    right[U_PHI][nr - 1 - i] = right[U_PHI][nr - nb - 1];
+    right[U_PI][nr - 1 - i] = right[U_PI][nr - nb - 1];
     //right[nr - 1 - i][U_CHI] = right[nr - nb - 1][U_CHI];
-    right[nr - 1 - i][U_CHI] = 0.0;
+    right[U_CHI][nr - 1 - i] = 0.0;
   }
 }
 // }}}
@@ -244,9 +262,9 @@ void FirstOrderWave::initData(){
         unsigned int nx = it->getGrid().getSize();
         double **u = it->getData();
         for(unsigned int i = 0; i < nx; i++){
-          u[i][U_PHI] = 0.0;
-          u[i][U_PI] = 1.0;
-          u[i][U_CHI] = 0.0;
+          u[U_PHI][i] = 0.0;
+          u[U_PI][i] = 1.0;
+          u[U_CHI][i] = 0.0;
         }
       }
       break;
@@ -270,9 +288,9 @@ void FirstOrderWave::applyGaussian(){
     double **u = it->getData();
     for(unsigned int i = 0; i < nx; i++){
       double val = std::exp(-(x[i] - x0)*(x[i] - x0)*64.0);
-      u[i][U_PHI] = val;
-      u[i][U_PI ] = 0.0;
-      u[i][U_CHI] = -128.0*(x[i] - x0)*val;
+      u[U_PHI][i] = val;
+      u[U_PI ][i] = 0.0;
+      u[U_CHI][i] = -128.0*(x[i] - x0)*val;
     }
   }
 }

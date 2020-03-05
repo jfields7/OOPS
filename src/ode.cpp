@@ -128,25 +128,25 @@ void ODE::exchangeGhostPoints(const SolverData& data1, const SolverData& data2){
   unsigned int shp1 = data1.getGrid().getSize();
   // Check if the spacing is essentially the same. If so, we just need to swap the points.
   if(fabs((dx1 - dx2)/dx1) < 1e-14){
-    for(unsigned int i = 0; i < nb; i++){
-      for(unsigned int j = 0; j < nEqs; j++){
+    for(unsigned int m = 0; m < nEqs; m++){
+      for(unsigned int i = 0; i < nb; i++){
         // Copy the first physical points on u2 into the ghost points of u1.
-        u1[shp1 - nb + i][j] = u2[nb + i][j];
+        u1[m][shp1 - nb + i] = u2[m][nb + i];
         // Copy the last physical points of u1 into the ghost points of u2.
-        u2[i][j] = u1[shp1 - 2*nb + i][j];
+        u2[m][i] = u1[m][shp1 - 2*nb + i];
       }
     }
   }
   // Otherwise, let's perform some interpolation. We first need to enforce a 2x difference
   // between the grids and complain if that's not the case.
-  if(fabs((dx1*2.0 - dx2)/dx2) < 1e-14){
+  else if(fabs((dx1*2.0 - dx2)/dx2) < 1e-14){
     // The left grid is finer than the right grid.
     // Note the nb + 1. We also need to copy the one physical point so that they stay
     // consistent. We use the one from the more refined grid.
-    for(unsigned int i = 0; i < nb + 1; i++){
-      for(unsigned int j = 0; j < nEqs; j++){
+    for(unsigned int m = 0; m < nEqs; m++){
+      for(unsigned int i = 0; i < nb + 1; i++){
         // Copy the exact point from u1 into the ghost region of u2.
-        u2[i][j] = u1[shp1 - 1 - 3*nb + 2*i][j];
+        u2[m][i] = u1[m][shp1 - 1 - 3*nb + 2*i];
       }
     }
     interpolateLeft(data1, data2);
@@ -156,10 +156,10 @@ void ODE::exchangeGhostPoints(const SolverData& data1, const SolverData& data2){
     //for(unsigned int i = 0; i < nb; i++){
     // Note the nb + 1. We also need to copy the one physical point so that they stay
     // consistent. We use the one from the more refined grid.
-    for(unsigned int i = 0; i < nb + 1; i++){
-      for(unsigned int j = 0; j < nEqs; j++){
+    for(unsigned int m = 0; m < nEqs; m++){
+      for(unsigned int i = 0; i < nb + 1; i++){
         // Copy the exact point from u2 into the ghost region of u1.
-        u1[shp1 - nb - 1 + i][j] = u2[nb + 2*i][j];
+        u1[m][shp1 - nb - 1 + i] = u2[m][nb + 2*i];
       }
     }
     interpolateRight(data1, data2);
@@ -180,23 +180,23 @@ void ODE::interpolateLeft(const SolverData& datal, const SolverData& datar){
   unsigned int shpl = datal.getGrid().getSize();
   double *stencil = interpolator->getStencil();
   unsigned int nStart = interpolator->getStencilSize()/2;
-  for(unsigned int i = 0; i < nb; i++){
-    for(unsigned int j = 0; j < nEqs; j++){
+  for(unsigned int n = 0; n < nEqs; n++){
+    for(unsigned int i = 0; i < nb; i++){
       // If we're on an even ghost point, we don't need to interpolate. This corresponds to an
       // odd index because counting starts at 0, hence the screwy math.
       if( i & 1 == 1){
-        ul[shpl - nb + i][j] = ur[nb + (i + 1)/2][j];
+        ul[n][shpl - nb + i] = ur[n][nb + (i + 1)/2];
       }
       else{
         // Fill in the stencil. Use the left points from the finer grid and the right
         // points from the coarser grid. This makes sure that we don't run out of points.
         for(int m = -nStart; m < 0; m++){
-          stencil[m + nStart] = ul[shpl - nb + i + 1 + 2*m][j];
+          stencil[m + nStart] = ul[n][shpl - nb + i + 1 + 2*m];
         }
         for(int m = 0; m < nStart; m++){
-          stencil[m + nStart] = ur[nb + i/2 + 1 + m][j];
+          stencil[m + nStart] = ur[n][nb + i/2 + 1 + m];
         }
-        ul[shpl - nb + i][j] = interpolator->interpolate();
+        ul[n][shpl - nb + i] = interpolator->interpolate();
       }
     }
   }
@@ -212,23 +212,23 @@ void ODE::interpolateRight(const SolverData& datal, const SolverData& datar){
   unsigned int shpl = datal.getGrid().getSize();
   double *stencil = interpolator->getStencil();
   unsigned int nStart = interpolator->getStencilSize()/2;
-  for(unsigned int i = 0; i < nb; i++){
-    for(unsigned int j = 0; j < nEqs; j++){
+  for(unsigned int n = 0; n < nEqs; n++){
+    for(unsigned int i = 0; i < nb; i++){
       // If we're on an even ghost point, we don't need to interpolate. This corresponds to an
       // odd index because counting starts at 0, hence the screwy math.
       if(i & 1 == 1){
-        ur[nb - 1 - i][j] = ul[shpl - nb - 1 - (i + 1)/2][j];
+        ur[n][nb - 1 - i] = ul[n][shpl - nb - 1 - (i + 1)/2];
       }
       else{
         // Fill in the stencil. Use the right points from the finer grid and the left
         // points from the coarser grid. This makes sure that we don't run out of points.
         for(int m = -nStart; m < 0; m++){
-          stencil[m + nStart] = ul[shpl - nb - 1 + m - i/2][j];
+          stencil[m + nStart] = ul[n][shpl - nb - 1 + m - i/2];
         }
         for(int m = 0; m < nStart; m++){
-          stencil[m + nStart] = ur[nb + 2*m - i][j];
+          stencil[m + nStart] = ur[n][nb + 2*m - i];
         }
-        ur[nb - 1 - i][j] = interpolator->interpolate();
+        ur[n][nb - 1 - i] = interpolator->interpolate();
       }
     }
   }
@@ -274,7 +274,7 @@ void ODE::dump_csv(char* name, double t, unsigned int var){
       //fprintf(f,"%08g,   %08g,   %08g\n", t, r[i], data[i][var]);
       fprintf(f,"%08g,   %08g,   %0g\n", t,
               it->getGrid().getPoints()[i],
-              it->getData()[i][var]);
+              it->getData()[var][i]);
     }
   }
 
