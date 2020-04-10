@@ -92,20 +92,20 @@ target_link_libraries(MultiGridTest bbhutil)
 target_include_directories(MultiGridTest PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include 
                            ${CMAKE_CURRENT_SOURCE_DIR}/MultiGrid/include)
 
-#set(EXAM_INCLUDE_FILES
-#    Physics601Exam/include/dampedwaveparameters.h
-#    Physics601Exam/include/dampedwave.h
-#    Physics601Exam/include/heun.h
-#   )
-#set(EXAM_SOURCE_FILES
-#    Physics601Exam/src/dampedwave.cpp
-#    Physics601Exam/src/heun.cpp
-#    Physics601Exam/src/exam.cpp
-#   )
-#
-#
-#set(SOURCE_FILES ${GRID_SOURCE_FILES} ${GRID_INCLUDE_FILES} ${EXAM_SOURCE_FILES} ${EXAM_INCLUDE_FILES})
-#add_executable(Physics601Exam ${SOURCE_FILES})
-#target_link_libraries(Physics601Exam bbhutil)
-#target_include_directories(Physics601Exam PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-#                           ${CMAKE_CURRENT_SOURCE_DIR}/Physics601Exam/include)
+set(FLUID_INCLUDE_FILES
+    fluid/include/reconstruction.h
+    fluid/include/minmod.h
+    fluid/include/norecon.h
+   )
+set(TEST_SOURCE_FILES
+    fluid/src/reconstruction.cpp
+    fluid/src/minmod.cpp
+    fluid/src/fluidmain.cpp
+    fluid/src/norecon.cpp
+   )
+
+set(SOURCE_FILES ${GRID_SOURCE_FILES} ${GRID_INCLUDE_FILES} ${TEST_SOURCE_FILES} ${FLUID_INCLUDE_FILES})
+add_executable(Fluid ${SOURCE_FILES})
+target_link_libraries(Fluid bbhutil)
+target_include_directories(Fluid PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+                           ${CMAKE_CURRENT_SOURCE_DIR}/fluid/include)
