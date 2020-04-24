@@ -1,3 +1,0 @@
-// the configured options and settings for Grid
-#define Grid_VERSION_MAJOR @Grid_VERSION_MAJOR@
-#define Grid_VERSION_MINOR @Grid_VERSION_MINOR@
