@@ -69,15 +69,21 @@ Result ODE::evolveStep(double dt){
     }
 
     // Perform the grid exchange and apply boundary conditions.
+    doAfterStage(true);
     performGridExchange();
+    doAfterExchange(true);
     applyBoundaries(true);
+    doAfterBoundaries(true);
   }
 
   for(auto it = data.begin(); it != data.end(); ++it){
     solver->combineStages(it->getWorkData(), it->getData(), it->getGrid(), dt, nEqs);
   }
+  doAfterStage(true);
   performGridExchange();
+  doAfterExchange(true);
   applyBoundaries(false);
+  doAfterBoundaries(true);
 
   // Loop over all the data sets.
   /*for(auto it = data.begin(); it != data.end(); ++it){

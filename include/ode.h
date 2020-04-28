@@ -74,6 +74,32 @@ class ODE{
     virtual void applyBoundaries(bool intermediate) {};
 
     /**
+     * A function that does nothing by default but can be overwritten in a base
+     * class to do stuff after the solver is called but before the grid data is
+     * exchanged.
+     * @param intermediate - Whether we're working with an intermediate solver
+     *                       stage or the final combining step.
+     */
+    virtual void doAfterStage(bool intermediate){};
+
+    /**
+     * A function that does nothing by default but can be overwritten in a base
+     * class to do stuff after the grid data is exchanged but before the
+     * boundary conditions are applied.
+     * @param intermediate - Whether we're working with an intermediate solver
+     *                       stage or the final combining step.
+     */
+    virtual void doAfterExchange(bool intermediate){};
+
+    /**
+     * A function that does nothing by default but can be overwritten in a base
+     * class to do stuff after the boundaries are applied.
+     * @param intermediate - Whether we're working with an intermediate solver
+     *                       stage or the final combining step.
+     */
+    virtual void doAfterBoundaries(bool intermediate){};
+
+    /**
      * Clear and reallocate all the data.
      */
     Result reallocateData();
