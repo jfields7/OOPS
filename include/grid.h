@@ -59,7 +59,7 @@ class Grid{
      * @returns A Result enumerator indicating success or what the
      *   specific error is.
      */
-    Result rebuildGrid(double bounds[2], unsigned int n, unsigned int nghosts);
+    Result rebuildGrid(const double bounds[2], unsigned int n, unsigned int nghosts);
 
     /**
      * Get the data points on the grid, including ghost points.
@@ -71,13 +71,13 @@ class Grid{
      * Get the number of grid points. This does include ghost points.
      * @returns An int containing the number of grid points.
      */
-    unsigned int getSize() const;
+    const unsigned int getSize() const;
 
     /**
      * Get the spacing dx of the grid.
      * @returns A double for the grid spacing.
      */
-    double getSpacing() const;
+    const double getSpacing() const;
 
     /**
      * Get the bounds (without ghost points) of this grid.

@@ -63,7 +63,7 @@ Grid::~Grid(){
 }
 
 // Build a new grid with new parameters.
-Result Grid::rebuildGrid(double bounds[2], unsigned int n, unsigned int nghosts){
+Result Grid::rebuildGrid(const double bounds[2], unsigned int n, unsigned int nghosts){
   // Delete the old grid. If the construction failed, it should be NULL anyway, so
   // this shouldn't fail.
   delete[] points;
@@ -110,12 +110,12 @@ const double* Grid::getPoints() const{
 }
 
 // Get the size of the grid.
-unsigned int Grid::getSize() const{
+const unsigned int Grid::getSize() const{
   return nx;
 }
 
 // Get the grid spacing.
-double Grid::getSpacing() const{
+const double Grid::getSpacing() const{
   return dx;
 }
 

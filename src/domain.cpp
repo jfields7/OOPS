@@ -1,4 +1,5 @@
 #include <domain.h>
+#include <iostream>
 
 Domain::Domain(){
   x_bounds[0] = 0.0;
@@ -38,7 +39,11 @@ const double* Domain::getBounds() const{
 }
 
 void Domain::setGhostPoints(unsigned int n){
+  if(nghosts == n){
+    return;
+  }
   nghosts = n;
+  grids.clear();
 }
 
 unsigned int Domain::getGhostPoints() const{
