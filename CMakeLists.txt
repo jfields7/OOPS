@@ -32,6 +32,7 @@ set(GRID_INCLUDE_FILES
     include/interpolator.h
     include/cubicinterpolator.h
     include/polynomialinterpolator.h
+    include/paramreader.h
    )
 
 set(GRID_SOURCE_FILES
@@ -44,6 +45,7 @@ set(GRID_SOURCE_FILES
     src/interpolator.cpp
     src/cubicinterpolator.cpp
     src/polynomialinterpolator.cpp
+    src/paramreader.cpp
    )
 
 set(TEST_SOURCE_FILES
@@ -87,6 +89,15 @@ set(SOURCE_FILES ${GRID_SOURCE_FILES} ${GRID_INCLUDE_FILES} ${TEST_SOURCE_FILES}
 add_executable(HeatTest ${SOURCE_FILES})
 target_link_libraries(HeatTest ${EXTRA_LIBS})
 target_include_directories(HeatTest PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR})
+
+set(TEST_SOURCE_FILES
+    tests/paramTest.cpp
+   )
+
+set(SOURCE_FILES ${GRID_SOURCE_FILES} ${GRID_INCLUDE_FILES} ${TEST_SOURCE_FILES})
+add_executable(ParamTest ${SOURCE_FILES})
+target_link_libraries(ParamTest ${EXTRA_LIBS})
+target_include_directories(ParamTest PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR})
 
 set(MULTIGRID_INCLUDE_FILES
     MultiGrid/include/waveparameters.h
