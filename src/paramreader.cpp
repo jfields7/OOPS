@@ -111,9 +111,9 @@ ParamReader::ParamResult ParamReader::parseParameter(std::string &str, std::stri
     value.erase(0,1);
   }
 
-  // Make sure the only characters left in the parameter are alphanumeric.
+  // Make sure the only characters left in the parameter are alphanumeric or have underscores.
   for(size_t i = 0; i < parameter.length(); i++){
-    if(!isalnum(parameter[i])){
+    if(!isalnum(parameter[i]) && (parameter[i]!='_')){
       return INVALID_PARAMETER;
     }
   }
@@ -121,7 +121,7 @@ ParamReader::ParamResult ParamReader::parseParameter(std::string &str, std::stri
   // a single decimal point for doubles.
   bool decimal = false;
   for(size_t i = 0; i < value.length(); i++){
-    if(!isalnum(value[i]) && (value[i] != '.')){
+    if(!isalnum(value[i]) && (value[i]!='_') && (value[i] != '.')){
       return INVALID_VALUE;
     }
     else if(value[i] == '.'){
