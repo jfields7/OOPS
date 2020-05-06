@@ -1,0 +1,4 @@
+# A test parameter file for the MultiGrid problem.
+[Wave]
+InitialConditions = GAUSSIAN
+KOSigma = 0.1

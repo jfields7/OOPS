@@ -102,10 +102,12 @@ target_include_directories(ParamTest PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include 
 set(MULTIGRID_INCLUDE_FILES
     MultiGrid/include/waveparameters.h
     MultiGrid/include/firstorderwave.h
+    MultiGrid/include/waveparser.h
    )
 set(TEST_SOURCE_FILES
     MultiGrid/src/multiGridTest.cpp
     MultiGrid/src/firstorderwave.cpp
+    MultiGrid/src/waveparser.cpp
    )
 
 set(SOURCE_FILES ${GRID_SOURCE_FILES} ${GRID_INCLUDE_FILES} ${TEST_SOURCE_FILES} ${MULTIGRID_INCLUDE_FILES})
