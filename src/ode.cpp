@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iostream>
 #include <cstdio>
+#include <output.h>
 
 ODE::ODE(const unsigned int n, const unsigned int id) : nEqs(n), pId(id){
   domain = nullptr;
@@ -256,6 +257,36 @@ Result ODE::setParameters(Parameters *p){
 // output_frame {{{
 void ODE::output_frame(char* name, double t, unsigned int var){
   
+  unsigned int nb = domain->getGhostPoints();
+  unsigned int size = 0;
+  double *x = nullptr;
+  for(auto it = data.begin(); it != data.end(); ++it){
+    unsigned int shp = it->getGrid().getSize();
+    // Unfortunately, SDF requires all arrays passed in
+    // to be mutable, but getPoints() only returns a const
+    // array. We could simply change getPoints() to return
+    // mutable arrays, but that's not a sound design principle.
+    // Therefore, we'll just bite the bullet and allocate memory
+    // to manually copy the array. This may change if too many
+    // people complain. We allocate more memory than we need
+    // to limit how often this has to be rebuilt during the
+    // output procedure.
+    if(shp > size){
+      if(x != nullptr){
+        delete x;
+      }
+      size = shp*2;
+      x = new double[size];
+    }
+    const double *points = it->getGrid().getPoints();
+    for(unsigned int i = 0; i < shp; i++){
+      x[i] = points[i];
+    }
+
+    double **u = it->getData();
+    output::output_data(name, u[var] + nb, x + nb, shp - 2*nb, t);
+  }
+  delete x;
 }
 // }}}
 

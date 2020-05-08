@@ -46,6 +46,7 @@ set(GRID_SOURCE_FILES
     src/cubicinterpolator.cpp
     src/polynomialinterpolator.cpp
     src/paramreader.cpp
+    src/output.cpp
    )
 
 set(TEST_SOURCE_FILES
@@ -54,6 +55,7 @@ set(TEST_SOURCE_FILES
 
 set(SOURCE_FILES ${GRID_SOURCE_FILES} ${GRID_INCLUDE_FILES} ${TEST_SOURCE_FILES})
 add_executable(GridTest ${SOURCE_FILES})
+target_link_libraries(GridTest ${EXTRA_LIBS})
 target_include_directories(GridTest PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR})
 
 set(TEST_SOURCE_FILES
@@ -62,15 +64,8 @@ set(TEST_SOURCE_FILES
 
 set(SOURCE_FILES ${GRID_SOURCE_FILES} ${GRID_INCLUDE_FILES} ${TEST_SOURCE_FILES})
 add_executable(DomainTest ${SOURCE_FILES})
+target_link_libraries(DomainTest ${EXTRA_LIBS})
 target_include_directories(DomainTest PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR})
-
-set(TEST_SOURCE_FILES
-    tests/rkTest.cpp
-   )
-
-set(SOURCE_FILES ${GRID_SOURCE_FILES} ${GRID_INCLUDE_FILES} ${TEST_SOURCE_FILES})
-add_executable(RKTest ${SOURCE_FILES})
-target_include_directories(RKTest PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR})
 
 set(TEST_SOURCE_FILES
     tests/waveTest.cpp
@@ -80,15 +75,6 @@ set(SOURCE_FILES ${GRID_SOURCE_FILES} ${GRID_INCLUDE_FILES} ${TEST_SOURCE_FILES}
 add_executable(WaveTest ${SOURCE_FILES})
 target_link_libraries(WaveTest ${EXTRA_LIBS})
 target_include_directories(WaveTest PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR})
-
-set(TEST_SOURCE_FILES
-    tests/heatTest.cpp
-   )
-
-set(SOURCE_FILES ${GRID_SOURCE_FILES} ${GRID_INCLUDE_FILES} ${TEST_SOURCE_FILES})
-add_executable(HeatTest ${SOURCE_FILES})
-target_link_libraries(HeatTest ${EXTRA_LIBS})
-target_include_directories(HeatTest PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR})
 
 set(TEST_SOURCE_FILES
     tests/paramTest.cpp
@@ -116,20 +102,27 @@ target_link_libraries(MultiGridTest ${EXTRA_LIBS})
 target_include_directories(MultiGridTest PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include 
                            ${CMAKE_CURRENT_SOURCE_DIR}/MultiGrid/include ${PROJECT_SOURCE_DIR})
 
-set(FLUID_INCLUDE_FILES
-    fluid/include/reconstruction.h
-    fluid/include/minmod.h
-    fluid/include/norecon.h
-   )
-set(TEST_SOURCE_FILES
-    fluid/src/reconstruction.cpp
-    fluid/src/minmod.cpp
-    fluid/src/fluidmain.cpp
-    fluid/src/norecon.cpp
-   )
-
-set(SOURCE_FILES ${GRID_SOURCE_FILES} ${GRID_INCLUDE_FILES} ${TEST_SOURCE_FILES} ${FLUID_INCLUDE_FILES})
-add_executable(Fluid ${SOURCE_FILES})
-target_link_libraries(Fluid ${EXTRA_LIBS})
-target_include_directories(Fluid PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-                           ${CMAKE_CURRENT_SOURCE_DIR}/fluid/include ${PROJECT_SOURCE_DIR})
+# set(FLUID_INCLUDE_FILES
+#     fluid/include/reconstruction.h
+#     fluid/include/minmod.h
+#     fluid/include/norecon.h
+#     fluid/include/fluid.h
+#     fluid/include/root.h
+#     fluid/include/fluidparameters.h
+#     fluid/include/fluidparser.h
+#    )
+# set(TEST_SOURCE_FILES
+#     fluid/src/reconstruction.cpp
+#     fluid/src/minmod.cpp
+#     fluid/src/fluidmain.cpp
+#     fluid/src/norecon.cpp
+#     fluid/src/fluid.cpp
+#     fluid/src/root.cpp
+#     fluid/src/fluidparser.cpp
+#    )
+# 
+# set(SOURCE_FILES ${GRID_SOURCE_FILES} ${GRID_INCLUDE_FILES} ${TEST_SOURCE_FILES} ${FLUID_INCLUDE_FILES})
+# add_executable(Fluid ${SOURCE_FILES})
+# target_link_libraries(Fluid ${EXTRA_LIBS})
+# target_include_directories(Fluid PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+#                            ${CMAKE_CURRENT_SOURCE_DIR}/fluid/include ${PROJECT_SOURCE_DIR})

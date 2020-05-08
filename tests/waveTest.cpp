@@ -625,9 +625,9 @@ int main(int argc, char *argv[]){
       chi[i] = u[i + nb][U_CHI];
     }
     if((n + 1) % frequency == 0){
-      output_data("Phi200", phi, r, N, t + dt);
-      output_data("Pi200", pi, r, N, t + dt);
-      output_data("Chi200", chi, r, N, t + dt);
+      output::output_data("Phi200", phi, r, N, t + dt);
+      output::output_data("Pi200", pi, r, N, t + dt);
+      output::output_data("Chi200", chi, r, N, t + dt);
     }
     double e = calcErrorGrid(domain, grid, phi, &exactGaussianWave, t + dt);
     //double e = calcErrorGrid(domain, grid, phi, &exactSineWave, t + dt);
@@ -686,8 +686,8 @@ int main(int argc, char *argv[]){
       phi[i] = u[i + nb][U_PHI];
       pi[i] = u[i + nb][U_PI];
     }
-    output_data("Phi2nd", phi, r, N, t);
-    output_data("Pi2nd", pi, r, N, t);
+    output::output_data("Phi2nd", phi, r, N, t);
+    output::output_data("Pi2nd", pi, r, N, t);
 
     double e = calcErrorGrid(domain, grid, phi, &exactGaussianWave, t);
     //double e = calcErrorGrid(domain, grid, phi, &exactSineWave, t);
@@ -713,7 +713,7 @@ int main(int argc, char *argv[]){
       //phi[i] = exactSineWave(points[i], t);
       //phi[i] = t;
     }
-    output_data("PhiExact",phi, r, grid.getSize(), t);
+    output::output_data("PhiExact",phi, r, grid.getSize(), t);
   }
   // }}}
 
