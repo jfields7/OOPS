@@ -79,11 +79,11 @@ Result ODE::evolveStep(double dt){
   for(auto it = data.begin(); it != data.end(); ++it){
     solver->combineStages(it->getWorkData(), it->getData(), it->getGrid(), dt, nEqs);
   }
-  doAfterStage(true);
+  doAfterStage(false);
   performGridExchange();
-  doAfterExchange(true);
+  doAfterExchange(false);
   applyBoundaries(false);
-  doAfterBoundaries(true);
+  doAfterBoundaries(false);
 
   // Loop over all the data sets.
   /*for(auto it = data.begin(); it != data.end(); ++it){
