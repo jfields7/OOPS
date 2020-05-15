@@ -1,6 +1,7 @@
 #ifndef SOLVER_H
 #define SOLVER_H
 #include "grid.h"
+#include <vector>
 
 class ODE;
 
@@ -32,24 +33,9 @@ class Solver{
     Solver(const int n) : nStages(n){};
 
     /**
-     * Calculate a single stage of the solver. Some methods, such as conservation laws,
-     * require specialized behavior after each stage of the calculation, so we force
-     * this to be split.
-     * @param rhs A function representing the righthand side of the ODE.
-     * @param data0 The original data coming into the solver.
-     * @param dataint The intermediate data from the previous stage. This is updated
-     *                during each RK stage to contain the intermediate value of the
-     *                solution that will be used in the next stage.
-     * @param dest The location for each stage's increment/righthand side.
-     * @param grid The grid this dataset belongs to.
-     * @param dt The size of time step to use for this solver.
-     * @param vars The number of variables in the system.
-     * @param stage Which stage of the solver should be calculated.
-     * @return If the operation was successful or why it failed.
+     *
      */
-    virtual Result calcStage(void (*rhs)(const Grid&, double**,double**), double *data0[], double *dataint[],
-                             double *dest[], const Grid& grid, double dt, const unsigned int vars, 
-                             unsigned int stage) = 0;
+    virtual Result setStageTime(double srcTime, double &destTime, double dt, unsigned int stage) = 0;
 
     /**
      * Calculate a single stage of the solver with vital information being provided by an ODE object. 
@@ -67,10 +53,11 @@ class Solver{
      *             to contain the original data and is so utilized in the calculation.
      * @param grid The grid this dataset belongs to.
      * @param dt The size of time step used for this solver.
-     * @param vars The number of variables in the system.
+     * @param evolutionIndices The indices for the equations that should be evolved.
      * @return A Result enum designating what the outcome of the calculation was.
      */
-    virtual Result combineStages(double **data[], double *dest[], const Grid& grid, double dt, const int vars) = 0;
+    virtual Result combineStages(double **data[], double *dest[], const Grid& grid, double dt, 
+      const std::vector<unsigned int>& evolutionIndices) = 0;
 
     /**
      * Find out how many stages the solver has.

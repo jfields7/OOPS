@@ -5,14 +5,19 @@
 
 using namespace std;
 
+// ParamReader {{{
 ParamReader::ParamReader(){
 
 }
+// }}}
 
+// ~ParamReader{{{
 ParamReader::~ParamReader(){
 
 }
+// }}}
 
+// readFile {{{
 ParamReader::ParamResult ParamReader::readFile(string fname){
   // Try to load the file.
   ifstream file;
@@ -90,7 +95,9 @@ ParamReader::ParamResult ParamReader::readFile(string fname){
 
   return SUCCESS;
 }
+// }}}
 
+// parseParameter {{{
 ParamReader::ParamResult ParamReader::parseParameter(std::string &str, std::string &section){
   // There shouldn't be any whitespace at the beginning or the end. We can
   // go ahead and just look for where the equals sign is.
@@ -139,18 +146,24 @@ ParamReader::ParamResult ParamReader::parseParameter(std::string &str, std::stri
 
   return SUCCESS;
 }
+// }}}
 
+// hasSection {{{
 bool ParamReader::hasSection(string section){
   return (data.find(section) != data.end());
 }
+// }}}
 
+// hasParameter {{{
 bool ParamReader::hasParameter(string section, string parameter){
   if(!hasSection(section)){
     return false;
   }
   return (data[section].find(parameter) != data[section].end());
 }
+// }}}
 
+// readAsString {{{
 string ParamReader::readAsString(string section, string parameter){
   if(!hasParameter(section,parameter))
   {
@@ -161,7 +174,9 @@ string ParamReader::readAsString(string section, string parameter){
     return data[section][parameter];
   }
 }
+// }}}
 
+// readAsDouble {{{
 double ParamReader::readAsDouble(string section, string parameter){
   if(!hasParameter(section,parameter)){
     cout << "Warning! " << section << " : " << parameter << " does not exist!\n";
@@ -178,7 +193,9 @@ double ParamReader::readAsDouble(string section, string parameter){
 
   return result;
 }
+// }}}
 
+// readAsInt {{{
 int ParamReader::readAsInt(string section, string parameter){
   if(!hasParameter(section,parameter)){
     cout << "Warning! " << section << " : " << parameter << " does not exist!\n";
@@ -195,7 +212,10 @@ int ParamReader::readAsInt(string section, string parameter){
 
   return result;
 }
+// }}}
 
+// clearData {{{
 void ParamReader::clearData(){
   data.clear();
 }
+// }}}

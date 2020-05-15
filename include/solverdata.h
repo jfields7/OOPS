@@ -3,24 +3,15 @@
 
 #include "types.h"
 #include "grid.h"
+#include "odedata.h"
 
-class SolverData{
+class SolverData : public ODEData{
   private:
   // Private members {{{
-  /**
-   * The number of independent equations in the system.
-   */
-  unsigned int nEq;
-
   /**
    * The number of stages used by the solver.
    */
   unsigned int nStages;
-
-  /**
-   * The raw data for the solution.
-   */
-  double **data;
 
   /**
    * The intermediate data for the solution.
@@ -31,11 +22,6 @@ class SolverData{
    * The storage for the results from the ODE solver.
    */
   double ***work;
-
-  /**
-   * The grid this data belongs to.
-   */
-  const Grid& mGrid;
   // }}}
 
   /**
@@ -60,13 +46,6 @@ class SolverData{
 
   // Inline getter functions {{{
   /**
-   * Get the array containing the data. This is stored as [vars][points].
-   */
-  inline double** getData() const{
-    return data;
-  }
-
-  /**
    * Get the array containing the intermediate data. This is stored as [vars][points].
    */
   inline double** getIntermediateData() const{
@@ -78,20 +57,6 @@ class SolverData{
    */
   inline double*** getWorkData() const{
     return work;
-  }
-
-  /**
-   * Get the number of equations for the ODE this represents.
-   */
-  inline unsigned int getEqCount() const{
-    return nEq;
-  }
-
-  /**
-   * Get the grid this data corresponds to.
-   */
-  inline const Grid& getGrid() const{
-    return mGrid;
   }
   // }}}
 

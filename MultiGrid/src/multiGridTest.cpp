@@ -9,6 +9,7 @@
 #include <waveparameters.h>
 #include <cubicinterpolator.h>
 #include <polynomialinterpolator.h>
+#include <waveparser.h>
 
 const double EPSILON = 1.e-15;
 const double sigma1st = 0.0;
@@ -58,12 +59,16 @@ int main(int argc, char* argv[]){
 
   // Now we need to try to construct our ODE system.
   RK4 rk4 = RK4();
+  WaveParser parser = WaveParser();
+  WaveParameters params;
   //CubicInterpolator interpolator = CubicInterpolator();
   PolynomialInterpolator interpolator = PolynomialInterpolator(4);
   FirstOrderWave ode = FirstOrderWave(domain, rk4);
   ode.setInterpolator(&interpolator);
-  WaveParameters *wp = (WaveParameters*) ode.getParameters();
-  wp->setInitialConditions(WaveParameters::GAUSSIAN);
+  //WaveParameters *wp = (WaveParameters*) ode.getParameters();
+  //wp->setInitialConditions(WaveParameters::GAUSSIAN);
+  parser.updateParameters("wave.par",&params);
+  ode.setParameters(&params);
   ode.initData();
 
   double ti = 0.0;
@@ -71,7 +76,8 @@ int main(int argc, char* argv[]){
   double dt = domain.getCFL()*(--domain.getGrids().end())->getSpacing();
   //double dt = domain.getCFL()*domain.getGrids().begin()->getSpacing();
   unsigned int M = (tf - ti)/dt;
-  ode.dump_csv("phi00000.csv", 0, 0);
+  //ode.dump_csv("phi00000.csv", 0, 0);
+  ode.output_frame("Phi", 0, 0);
   //ode.dump_csv("chi00000.csv", 0, 2);
   for(unsigned int i = 0; i < M; i++){
     double t = (i + 1)*dt;
@@ -79,7 +85,8 @@ int main(int argc, char* argv[]){
 
     char buffer[12];
     sprintf(buffer, "phi%05d.csv",i + 1);
-    ode.dump_csv(buffer, t, 0);
+    //ode.dump_csv(buffer, t, 0);
+    ode.output_frame("Phi", t, 0);
     //sprintf(buffer, "chi%05d.csv",i + 1);
     //ode.dump_csv(buffer, t, 2);
   }

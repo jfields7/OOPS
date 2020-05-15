@@ -9,6 +9,8 @@ enum Result{
   OUT_OF_BOUNDS,
   INVALID_STAGE,
   UNRECOGNIZED_PARAMS,
+  FIELD_EXISTS,
+  UNRECOGNIZED_FIELD,
 };
 
 enum Boundary{

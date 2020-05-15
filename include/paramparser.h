@@ -29,11 +29,6 @@ class ParamParser{
     }
 
     /**
-     * Generate a new Parameters object from a file.
-     */
-    virtual Parameters& getParameters(std::string fname)=0;
-
-    /**
      * Update an existing Parameters object from a file.
      */
     virtual void updateParameters(std::string fname, Parameters *params)=0;

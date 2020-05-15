@@ -7,13 +7,18 @@
 
 ODE::ODE(const unsigned int n, const unsigned int id) : nEqs(n), pId(id){
   domain = nullptr;
-  params = nullptr;
   solver = nullptr;
   max_dx = 0.0;
   interpolator = nullptr;
+  time = 0.0;
+  for(unsigned int i = 0; i < nEqs; i++){
+    evolutionIndices.push_back(i);
+  }
 }
 
 ODE::~ODE(){
+  auxiliaryFields.clear();
+  auxiliaryFieldNames.clear();
   data.clear();
 }
 
@@ -27,8 +32,50 @@ Result ODE::reallocateData(){
     max_dx = (it->getSpacing() > max_dx) ? it->getSpacing() : max_dx;
     data.emplace(nEqs, solver->getNStages(), *it);
   }
+  for(const auto &field : auxiliaryFieldNames){
+    auxiliaryFields[field].clear();
+    for(auto it = domain->getGrids().begin(); it != domain->getGrids().end(); ++it){
+      auxiliaryFields[field].emplace(nEqs, *it);
+    }
+  }
 
   return SUCCESS;
+}
+// }}}
+
+// addAuxiliaryField {{{
+Result ODE::addAuxiliaryField(std::string name) {
+  if(auxiliaryFields.find(name) != auxiliaryFields.end()){
+    return FIELD_EXISTS;
+  }
+  else{
+    auxiliaryFields[name] = std::set<ODEData>();
+    auxiliaryFieldNames.insert(name);
+    return SUCCESS;
+  }
+}
+// }}}
+
+// removeAuxiliaryField {{{
+Result ODE::removeAuxiliaryField(std::string name){
+  if(auxiliaryFields.find(name) == auxiliaryFields.end()){
+    return UNRECOGNIZED_FIELD;
+  }
+  else{
+    auxiliaryFields.erase(name);
+    auxiliaryFieldNames.erase(name);
+  }
+}
+// }}}
+
+// getAuxiliaryField {{{
+std::set<ODEData>* ODE::getAuxiliaryField(std::string name){
+  if(auxiliaryFields.find(name) != auxiliaryFields.end()){
+    return &auxiliaryFields[name];
+  }
+  else{
+    return nullptr;
+  }
 }
 // }}}
 
@@ -59,8 +106,12 @@ Result ODE::setInterpolator(Interpolator* interp){
 
 // evolveStep {{{
 Result ODE::evolveStep(double dt){
+  // Keep track of the current time as well as the original time.
+  double old_time = time;
+
   // Loop over every stage for the solver.
   for(unsigned int i = 0; i < solver->getNStages(); i++){
+    solver->setStageTime(old_time, time, dt, i);
     // Loop over every data set in the domain.
     for(auto it = data.begin(); it != data.end(); ++it){
       //solver->calcStage(rhs, it->getData(), it->getIntermediateData(), (it->getWorkData())[i],
@@ -77,33 +128,16 @@ Result ODE::evolveStep(double dt){
     doAfterBoundaries(true);
   }
 
+  time = old_time + dt;
+
   for(auto it = data.begin(); it != data.end(); ++it){
-    solver->combineStages(it->getWorkData(), it->getData(), it->getGrid(), dt, nEqs);
+    solver->combineStages(it->getWorkData(), it->getData(), it->getGrid(), dt, evolutionIndices);
   }
   doAfterStage(false);
   performGridExchange();
   doAfterExchange(false);
   applyBoundaries(false);
   doAfterBoundaries(false);
-
-  // Loop over all the data sets.
-  /*for(auto it = data.begin(); it != data.end(); ++it){
-    // Figure out how many time steps we need to take for this grid.
-    unsigned int N = (unsigned int) round(max_dx/it->getGrid().getSpacing());
-    double dt_i = dt/N;
-    for(int t = 0; t < N; t++){
-      for(unsigned int i = 0; i < solver->getNStages(); i++){
-        solver->calcStage(this, it->getData(), it->getIntermediateData(), (it->getWorkData())[i],
-                          it->getGrid(), dt_i, i);
-        applyBoundaries();
-      }
-
-      solver->combineStages(it->getWorkData(), it->getData(), it->getGrid(), dt_i, nEqs);
-      applyBoundaries();
-    }
-  }
-
-  performGridExchange();*/
 
   return SUCCESS;
 }
@@ -242,18 +276,6 @@ void ODE::interpolateRight(const SolverData& datal, const SolverData& datar){
 }
 // }}}
 
-// setParameters {{{
-Result ODE::setParameters(Parameters *p){
-  if(p->getId() == pId){
-    params = p;
-    return SUCCESS;
-  }
-  else{
-    return UNRECOGNIZED_PARAMS;
-  }
-}
-// }}}
-
 // output_frame {{{
 void ODE::output_frame(char* name, double t, unsigned int var){
   
@@ -318,3 +340,14 @@ void ODE::dump_csv(char* name, double t, unsigned int var){
   fclose(f);
 }
 // }}}
+
+// getTime {{{
+double ODE::getTime(){
+  return time;
+}
+// }}}
+
+// setTime {{{
+void ODE::setTime(double t){
+  time = t;
+}

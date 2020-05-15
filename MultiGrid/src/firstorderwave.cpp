@@ -12,16 +12,12 @@ FirstOrderWave::FirstOrderWave(Domain& d, Solver& s) : ODE(3, 1){
   domain = &d;
   solver = &s;
 
-  // Set some default parameters.
-  params = new WaveParameters();
-
   reallocateData();
 }
 // }}}
 
 // ~FirstOrderWave {{{
 FirstOrderWave::~FirstOrderWave(){
-  delete params;
 }
 // }}}
 
@@ -126,8 +122,7 @@ void FirstOrderWave::rhs(const Grid& grid, double **u, double **dudt){
 
 // applyKODiss {{{
 void FirstOrderWave::applyKODiss(const Grid& grid, double **u, double **dudt){
-  WaveParameters *wp = (WaveParameters*) params;
-  double koSigma = wp->getKOSigma();
+  double koSigma = params->getKOSigma();
   // The grid needs to have at least 7 points for this to work.
   if(grid.getSize() < 7){
     printf("Grid is too small to use Kreiss-Oliger dissipation.\n");
@@ -249,10 +244,8 @@ void FirstOrderWave::applyBoundaries(bool intermediate){
 
 // initData {{{
 void FirstOrderWave::initData(){
-  // Cast our parameters to wave parameters.
-  WaveParameters *wp = (WaveParameters*) params;
 
-  switch(wp->getInitialConditions()){
+  switch(params->getInitialConditions()){
     case WaveParameters::GAUSSIAN:
       applyGaussian();
       break;
@@ -280,6 +273,7 @@ void FirstOrderWave::initData(){
 void FirstOrderWave::applyGaussian(){
   // First, let's identify the center.
   double x0 = 0.5*(domain->getBounds()[1] + domain->getBounds()[0]);
+  double amp = params->getGaussianAmplitude();
 
   // Next, let's loop through every grid and start assigning points.
   for(auto it = data.begin(); it != data.end(); ++it){
@@ -287,11 +281,23 @@ void FirstOrderWave::applyGaussian(){
     unsigned int nx = it->getGrid().getSize();
     double **u = it->getData();
     for(unsigned int i = 0; i < nx; i++){
-      double val = std::exp(-(x[i] - x0)*(x[i] - x0)*64.0);
+      double val = amp*std::exp(-(x[i] - x0)*(x[i] - x0)*64.0);
       u[U_PHI][i] = val;
       u[U_PI ][i] = 0.0;
       u[U_CHI][i] = -128.0*(x[i] - x0)*val;
     }
   }
+}
+// }}}
+
+// setParameters {{{
+void FirstOrderWave::setParameters(WaveParameters *p){
+  params = p;
+}
+// }}}
+
+// getParameters {{{
+WaveParameters* FirstOrderWave::getParameters(){
+  return params;
 }
 // }}}

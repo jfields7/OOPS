@@ -2,6 +2,7 @@
 #define FIRST_ORDER_WAVE_H
 
 #include <ode.h>
+#include <waveparameters.h>
 
 class FirstOrderWave : public ODE {
   private:
@@ -13,6 +14,8 @@ class FirstOrderWave : public ODE {
     void applyKODiss(const Grid& grid, double **u, double **dudt);
 
     void applyGaussian();
+
+    WaveParameters *params;
   protected:
     virtual void applyBoundaries(bool intermediate);
 
@@ -23,6 +26,9 @@ class FirstOrderWave : public ODE {
     virtual ~FirstOrderWave();
 
     virtual void initData();
+
+    void setParameters(WaveParameters* p);
+    WaveParameters* getParameters();
 };
 
 #endif

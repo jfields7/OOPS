@@ -2,19 +2,13 @@
 #include <new>
 #include <iostream>
 
-SolverData::SolverData(unsigned int eqCount, unsigned int nStages, const Grid& grid): mGrid(grid){
+// {{{
+SolverData::SolverData(unsigned int eqCount, unsigned int nStages, const Grid& grid): ODEData(eqCount, grid){
   this->nStages = nStages;
-  nEq = eqCount;
-
   unsigned int nx = mGrid.getSize();
-  
   // Try to allocate memory for the arrays.
   try{
-    data = new double*[eqCount];
     data_int = new double*[eqCount];
-    for(int i = 0; i < eqCount; i++){
-      data[i] = new double[nx];
-    }
     for(int i = 0; i < eqCount; i++){
       data_int[i] = new double[nx];
     }
@@ -29,16 +23,19 @@ SolverData::SolverData(unsigned int eqCount, unsigned int nStages, const Grid& g
   catch(std::bad_alloc& ba){
     std::cerr << "Failed to allocate memory for solver data.\n";
     nEq = 0;
-    data = NULL;
     data_int = NULL;
     work = NULL;
   }
 }
+// }}}
 
-SolverData::SolverData(const SolverData& other): mGrid(other.getGrid()){
+// {{{
+SolverData::SolverData(const SolverData& other): ODEData(other){
   std::cout << "SolverData copy constructor: This shouldn't be getting called, but it is.\n";
 }
+// }}}
 
+// {{{
 SolverData::~SolverData(){
   for(int i = 0; i < nStages; i++){
     for(int j = 0; j < nEq; j++){
@@ -48,13 +45,14 @@ SolverData::~SolverData(){
   }
   for(int i = 0; i < nEq; i++){
     delete[] data_int[i];
-    delete[] data[i];
   }
   delete[] work;
   delete[] data_int;
-  delete[] data;
 }
+// }}}
 
+// {{{
 bool SolverData::operator < (const SolverData& data) const{
   return mGrid < data.getGrid();
 }
+// }}}
