@@ -128,7 +128,7 @@ ParamReader::ParamResult ParamReader::parseParameter(std::string &str, std::stri
   // a single decimal point for doubles.
   bool decimal = false;
   for(size_t i = 0; i < value.length(); i++){
-    if(!isalnum(value[i]) && (value[i]!='_') && (value[i] != '.') && (value[i] != '-')){
+    if(!isalnum(value[i]) && (value[i]!='_') && (value[i] != '.') && (value[i] != '-') && (value[i] != ' ')){
       return INVALID_VALUE;
     }
     else if(value[i] == '.'){
