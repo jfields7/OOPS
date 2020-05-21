@@ -21,7 +21,10 @@ def addFooter(f):
   f.write("#endif\n");
 
 def addGetter(f, name, vtype):
-  f.write("    inline %s get%s(){\n" % (vtype,name));
+  if vtype=="string":
+    f.write("    inline std::string get%s(){\n" % name);
+  else:
+    f.write("    inline %s get%s(){\n" % (vtype,name));
   f.write("      return m%s;\n" % name);
   f.write("    }\n\n");
 
@@ -31,12 +34,18 @@ def addEnumSetter(f, name):
   f.write("    }\n\n");
 
 def addSetter(f, name, vtype):
-  f.write("    inline void set%s(%s %s){\n" % (name, vtype, name));
+  if vtype=="string":
+    f.write("    inline void set%s(std::string %s){\n" % (name, name));
+  else:
+    f.write("    inline void set%s(%s %s){\n" % (name, vtype, name));
   f.write("      m%s = %s;\n" % (name, name));
   f.write("    }\n\n");
 
 def addVariable(f, name, vtype):
-  f.write("    %s m%s;\n" % (vtype, name));
+  if vtype=="string":
+    f.write("    std::string m%s;\n" % name);
+  else:
+    f.write("    %s m%s;\n" % (vtype, name));
 
 def addPublic(f):
   f.write("  public:\n");
@@ -49,7 +58,10 @@ def addConstructor(f, obj):
 
   members = obj["members"];
   for var in members:
-    f.write("      m" + var["name"] + " = " + str(var["default"]) + ";\n");
+    if var["type"]=="string":
+      f.write("      m" + var["name"] + " = \"" + str(var["default"]) + "\";\n");
+    else:
+      f.write("      m" + var["name"] + " = " + str(var["default"]) + ";\n");
 
   f.write("    }\n\n");
 
