@@ -295,7 +295,7 @@ void ODE::output_frame(char* name, double t, unsigned int var){
     // output procedure.
     if(shp > size){
       if(x != nullptr){
-        delete x;
+        delete[] x;
       }
       size = shp*2;
       x = new double[size];
@@ -308,7 +308,7 @@ void ODE::output_frame(char* name, double t, unsigned int var){
     double **u = it->getData();
     output::output_data(name, u[var] + nb, x + nb, shp - 2*nb, t);
   }
-  delete x;
+  delete[] x;
 }
 // }}}
 
