@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cstdio>
 #include <output.h>
+#include <memory>
 
 ODE::ODE(const unsigned int n, const unsigned int id) : nEqs(n), pId(id){
   domain = nullptr;
@@ -17,8 +18,6 @@ ODE::ODE(const unsigned int n, const unsigned int id) : nEqs(n), pId(id){
 }
 
 ODE::~ODE(){
-  auxiliaryFields.clear();
-  auxiliaryFieldNames.clear();
   data.clear();
 }
 
@@ -32,50 +31,38 @@ Result ODE::reallocateData(){
     max_dx = (it->getSpacing() > max_dx) ? it->getSpacing() : max_dx;
     data.emplace(nEqs, solver->getNStages(), *it);
   }
-  for(const auto &field : auxiliaryFieldNames){
-    auxiliaryFields[field].clear();
-    for(auto it = domain->getGrids().begin(); it != domain->getGrids().end(); ++it){
-      auxiliaryFields[field].emplace(nEqs, *it);
-    }
+
+  for(auto it = domain->getGrids().begin(); it != domain->getGrids().end(); ++it){
+    max_dx = (it->getSpacing() > max_dx) ? it->getSpacing() : max_dx;
+    fieldData.emplace(std::unique_ptr<FieldMap>(new FieldMap(*it, fieldList)));
   }
 
   return SUCCESS;
 }
 // }}}
 
-// addAuxiliaryField {{{
-Result ODE::addAuxiliaryField(std::string name) {
-  if(auxiliaryFields.find(name) != auxiliaryFields.end()){
+// addField {{{
+Result ODE::addField(std::string name, unsigned int eqs, bool isEvolved) {
+  if(fieldList.find(name) != fieldList.end()){
     return FIELD_EXISTS;
   }
   else{
-    auxiliaryFields[name] = std::set<ODEData>();
-    auxiliaryFieldNames.insert(name);
-    return SUCCESS;
+    unsigned int stages = (isEvolved ? solver->getNStages() : 0);
+    fieldList.insert({name, FieldInfo(name, eqs, stages)});
   }
+  return SUCCESS;
 }
 // }}}
 
-// removeAuxiliaryField {{{
-Result ODE::removeAuxiliaryField(std::string name){
-  if(auxiliaryFields.find(name) == auxiliaryFields.end()){
+// removeField {{{
+Result ODE::removeField(std::string name){
+  if(fieldList.find(name) == fieldList.end()){
     return UNRECOGNIZED_FIELD;
   }
   else{
-    auxiliaryFields.erase(name);
-    auxiliaryFieldNames.erase(name);
+    fieldList.erase(name);
   }
-}
-// }}}
-
-// getAuxiliaryField {{{
-std::set<ODEData>* ODE::getAuxiliaryField(std::string name){
-  if(auxiliaryFields.find(name) != auxiliaryFields.end()){
-    return &auxiliaryFields[name];
-  }
-  else{
-    return nullptr;
-  }
+  return SUCCESS;
 }
 // }}}
 
@@ -306,6 +293,33 @@ void ODE::output_frame(char* name, double t, unsigned int var){
     }
 
     double **u = it->getData();
+    output::output_data(name, u[var] + nb, x + nb, shp - 2*nb, t);
+  }
+  delete[] x;
+}
+// }}}
+
+// output_field {{{
+void ODE::output_field(std::string field, char* name, double t, unsigned int var){
+  unsigned int nb = domain->getGhostPoints();
+  unsigned int size = 0;
+  double *x = nullptr;
+  for(auto it = fieldData.begin(); it != fieldData.end(); ++it){
+    auto evol = (**it)[field];
+    unsigned int shp = evol->getGrid().getSize();
+    if(shp > size){
+      if(x != nullptr){
+        delete[] x;
+      }
+      size = shp*2;
+      x = new double[size];
+    }
+    const double *points = evol->getGrid().getPoints();
+    for(unsigned int i = 0; i < shp; i++){
+      x[i] = points[i];
+    }
+
+    double **u = evol->getData();
     output::output_data(name, u[var] + nb, x + nb, shp - 2*nb, t);
   }
   delete[] x;

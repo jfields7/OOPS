@@ -1,0 +1,15 @@
+{
+  "FieldTest":{
+    "name":"FieldTest",
+    "id":1,
+    "members":[
+      {
+        "name":"Amplitude",
+        "type":"double",
+        "min":-1e6,
+        "max":1e6,
+        "default":1.0
+      }
+    ]
+  }
+}

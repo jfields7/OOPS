@@ -40,7 +40,7 @@ void WaveParser::updateParameters(string fname, Parameters* params){
       pars->setKOSigma(result);
     }
     else{
-      cout << "Parameter %s out of range.\n";
+      cout << "Parameter KOSigma out of range.\n";
     }
   }
 
@@ -50,7 +50,7 @@ void WaveParser::updateParameters(string fname, Parameters* params){
       pars->setGaussianAmplitude(result);
     }
     else{
-      cout << "Parameter %s out of range.\n";
+      cout << "Parameter GaussianAmplitude out of range.\n";
     }
   }
 

@@ -61,6 +61,7 @@ set(OOPS_INCLUDE_FILES
     include/cubicinterpolator.h
     include/polynomialinterpolator.h
     include/paramreader.h
+    include/fieldmap.h
    )
 
 set(OOPS_SOURCE_FILES
@@ -76,6 +77,7 @@ set(OOPS_SOURCE_FILES
     src/polynomialinterpolator.cpp
     src/paramreader.cpp
     src/output.cpp
+    src/fieldmap.cpp
    )
 
 add_library(oops ${OOPS_INCLUDE_FILES} ${OOPS_SOURCE_FILES})
