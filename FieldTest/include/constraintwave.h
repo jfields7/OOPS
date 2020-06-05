@@ -16,15 +16,13 @@ class ConstraintWave : public ODE{
 
     FieldTestParameters *params;
   protected:
-    virtual void rhs(const Grid& grid, double **u, double **dudt);
+    virtual void rhs(std::shared_ptr<FieldMap>& fieldMap);
 
   public:
     ConstraintWave(Domain& d, Solver& s);
     virtual ~ConstraintWave();
 
     virtual void initData();
-
-    virtual Result evolveStep(double dt);
 
     void setParameters(FieldTestParameters* p);
     FieldTestParameters* getParameters();

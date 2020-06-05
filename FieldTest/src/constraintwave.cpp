@@ -11,8 +11,8 @@ ConstraintWave::ConstraintWave(Domain &d, Solver &s) : ODE(3, 1){
   domain = &d;
   solver = &s;
 
-  addField("Evolution", nEqs, true);
-  addField("Constraint", 1, false);
+  addField("Evolution", nEqs, true, true);
+  addField("Constraint", 1, false, true);
 
   reallocateData();
 }
@@ -24,13 +24,16 @@ ConstraintWave::~ConstraintWave(){
 // }}}
 
 // rhs {{{
-void ConstraintWave::rhs(const Grid& grid, double **u, double **dudt){
+void ConstraintWave::rhs(std::shared_ptr<FieldMap>& fieldMap){
   unsigned int nb = domain->getGhostPoints();
   // Check that the grid is actually big enough.
+  const Grid& grid = fieldMap->getGrid();
   if(grid.getSize() < 1){
     printf("Grid is too small. Need at least 5 points.\n");
     return;
   }
+  double **dudt = fieldMap->getSolverField("Evolution")->getCurrentRHS();
+  double **u = fieldMap->getSolverField("Evolution")->getIntermediateData();
 
   // Define some variables we'll need.
   double stencil3[3] = {0.0, 0.0, 0.0};
@@ -70,17 +73,6 @@ void ConstraintWave::rhs(const Grid& grid, double **u, double **dudt){
 void ConstraintWave::initData(){
   double x0 = 0.5*(domain->getBounds()[1] + domain->getBounds()[0]);
   double amp = 1.0;
-  /*for(auto it = data.begin(); it != data.end(); ++it){
-    const double *x = it->getGrid().getPoints();
-    unsigned int nx = it->getGrid().getSize();
-    double **u = it->getData();
-    for(unsigned int i = 0; i < nx; i++){
-      double val = amp*std::exp(-(x[i] - x0)*(x[i] - x0)*64.0);
-      u[U_PHI][i] = val;
-      u[U_PI ][i] = 0.0;
-      u[U_CHI][i] = -128.0*(x[i] - x0)*val;
-    }
-  }*/
   for(auto it = fieldData.begin(); it != fieldData.end(); ++it){
     auto evol = (**it)["Evolution"];
     const double *x = evol->getGrid().getPoints();
@@ -105,34 +97,5 @@ void ConstraintWave::setParameters(FieldTestParameters *p){
 // getParameters {{{
 FieldTestParameters* ConstraintWave::getParameters(){
   return params;
-}
-// }}}
-
-// evolveStep {{{
-Result ConstraintWave::evolveStep(double dt){
-  double old_time = time;
-
-  // Loop over every stage for the solver.
-  for(unsigned int i = 0; i < solver->getNStages(); i++){
-    solver->setStageTime(old_time, time, dt, i);
-    // Loop over every data set in the domain.
-    for(auto it = fieldData.begin(); it != fieldData.end(); ++it){
-      //auto evol = std::dynamic_pointer_cast<SolverData>((**it)["Evolution"]);
-      auto evol = (**it).getSolverField("Evolution");
-      solver->calcStage(this, evol->getData(), evol->getIntermediateData(), (evol->getWorkData())[i],
-                        evol->getGrid(), dt, i);
-    }
-  }
-
-  time = old_time + dt;
-
-  for(auto it = fieldData.begin(); it != fieldData.end(); ++it){
-    //auto evol = (std::unique_ptr<SolverData>) (**it)["Evolution"];
-    //auto evol = std::dynamic_pointer_cast<SolverData>((**it)["Evolution"]);
-    auto evol = (**it).getSolverField("Evolution");
-    solver->combineStages(evol->getWorkData(), evol->getData(), evol->getGrid(), dt, evolutionIndices);
-  }
-
-  return SUCCESS;
 }
 // }}}

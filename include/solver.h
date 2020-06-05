@@ -2,8 +2,10 @@
 #define SOLVER_H
 #include "grid.h"
 #include <vector>
+#include <memory>
 
 class ODE;
+class FieldMap;
 
 /**************************************************************************************
  *
@@ -24,13 +26,13 @@ class Solver{
     /**
      * The number of stages used by this solver.
      */
-    const int nStages;
+    const unsigned int nStages;
     
   public:
     /**
      * A very basic constructor that just sets nStages.
      */
-    Solver(const int n) : nStages(n){};
+    Solver(const unsigned int n) : nStages(n){};
 
     /**
      *
@@ -42,8 +44,7 @@ class Solver{
      * Although the grid and work data are all included in the ODE object, we need to specify them anyway
      * so that we only operate on a single grid.
      */
-    virtual Result calcStage(ODE *ode, double *data0[], double *dataint[], double *dest[], const Grid& grid,
-                             double dt, unsigned int stage) = 0;
+    virtual Result calcStage(ODE *ode, std::shared_ptr<FieldMap>& fieldMap, double dt, unsigned int stage)=0;
 
     /**
      * Combine all the calculations from every stage.
@@ -56,8 +57,7 @@ class Solver{
      * @param evolutionIndices The indices for the equations that should be evolved.
      * @return A Result enum designating what the outcome of the calculation was.
      */
-    virtual Result combineStages(double **data[], double *dest[], const Grid& grid, double dt, 
-      const std::vector<unsigned int>& evolutionIndices) = 0;
+    virtual Result combineStages(std::shared_ptr<FieldMap>& fieldMap, double dt)=0;
 
     /**
      * Find out how many stages the solver has.

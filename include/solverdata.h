@@ -22,6 +22,11 @@ class SolverData : public ODEData{
    * The storage for the results from the ODE solver.
    */
   double ***work;
+
+  /**
+   * The current stage in the ODE solver.
+   */
+  unsigned int currStage;
   // }}}
 
   /**
@@ -42,9 +47,9 @@ class SolverData : public ODEData{
   /**
    * A destructor for SolverData that deletes all the memory that was allocated.
    */
-  ~SolverData();
+  virtual ~SolverData();
 
-  // Inline getter functions {{{
+  // Inline getter and setter functions {{{
   /**
    * Get the array containing the intermediate data. This is stored as [vars][points].
    */
@@ -58,6 +63,28 @@ class SolverData : public ODEData{
   inline double*** getWorkData() const{
     return work;
   }
+
+  /**
+   * Get a specific righthand side array.
+   */
+  inline double** getCurrentRHS() const{
+    return work[currStage];
+  }
+
+  /**
+   * Get the current stage.
+   */
+  inline unsigned int getCurrentStage() const{
+    return currStage;
+  }
+
+  /**
+   * Update the current stage.
+   */
+  inline void setCurrentStage(unsigned int stage){
+    currStage = stage;
+  }
+
   // }}}
 
   /**

@@ -17,9 +17,9 @@ class FirstOrderWave : public ODE {
 
     WaveParameters *params;
   protected:
-    virtual void applyBoundaries(bool intermediate);
+    virtual void applyBoundaries();
 
-    virtual void rhs(const Grid& grid, double **u, double **dudt);
+    virtual void rhs(std::shared_ptr<FieldMap>& fieldMap);
 
   public:
     FirstOrderWave(Domain& d, Solver& s);

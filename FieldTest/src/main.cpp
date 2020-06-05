@@ -28,13 +28,13 @@ int main(int argc, char* argv[]){
   double dt = domain.getCFL()*(domain.getGrids().begin())->getSpacing();
   unsigned int M = (tf - ti)/dt;
   //ode.output_frame("Phi", 0, 0);
-  ode.output_field("Evolution","Phi",0,0);
+  ode.outputSDFField("Evolution","Phi",0,0);
   for(unsigned int i = 0; i < M; i++){
     double t = (i + 1)*dt;
     ode.evolveStep(dt);
 
     //ode.output_frame("Phi", t, 0);
-    ode.output_field("Evolution","Phi",t,0);
+    ode.outputSDFField("Evolution","Phi",t,0);
   }
 
   return 0;
