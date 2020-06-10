@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 
 # Set the project name
-project(OOPS VERSION 1.1)
+project(OOPS VERSION 1.2)
 
 # Specify the C++ Standard
 set(CMAKE_CXX_STANDARD 11)
@@ -50,6 +50,7 @@ set(OOPS_INCLUDE_FILES
     include/grid.h
     include/domain.h
     include/rk4.h
+    include/rkck.h
     include/solver.h
     include/output.h
     include/cubic.h
@@ -68,6 +69,7 @@ set(OOPS_SOURCE_FILES
     src/grid.cpp
     src/domain.cpp
     src/rk4.cpp
+    src/rkck.cpp
     src/ode.cpp
     src/odedata.cpp
     src/solverdata.cpp

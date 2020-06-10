@@ -1,0 +1,3 @@
+[Wave]
+GridPoints = 101
+GaussianSigma = 0.125
