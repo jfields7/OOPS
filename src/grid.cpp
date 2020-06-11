@@ -105,19 +105,19 @@ Result Grid::rebuildGrid(const double bounds[2], unsigned int n, unsigned int ng
 }
 
 // Get all the points.
-const double* Grid::getPoints() const{
+/*const double* Grid::getPoints() const{
   return points;
-}
+}*/
 
 // Get the size of the grid.
-const unsigned int Grid::getSize() const{
+/*const unsigned int Grid::getSize() const{
   return nx;
-}
+}*/
 
 // Get the grid spacing.
-const double Grid::getSpacing() const{
+/*const double Grid::getSpacing() const{
   return dx;
-}
+}*/
 
 // Get the bounds of the grid.
 const double* Grid::getBounds() const{

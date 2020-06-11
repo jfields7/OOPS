@@ -65,19 +65,25 @@ class Grid{
      * Get the data points on the grid, including ghost points.
      * @returns A const double* containing all the points.
      */
-    const double* getPoints() const;
+    inline const double* getPoints() const{
+      return points;
+    }
 
     /**
      * Get the number of grid points. This does include ghost points.
      * @returns An int containing the number of grid points.
      */
-    const unsigned int getSize() const;
+    inline const unsigned int getSize() const{
+      return nx;
+    }
 
     /**
      * Get the spacing dx of the grid.
      * @returns A double for the grid spacing.
      */
-    const double getSpacing() const;
+    inline const double getSpacing() const{
+      return dx;
+    }
 
     /**
      * Get the bounds (without ghost points) of this grid.

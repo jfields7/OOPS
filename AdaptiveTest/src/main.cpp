@@ -53,7 +53,7 @@ int main(int argc, char* argv[]){
     //char buffer[12];
     //sprintf(buffer, "phi%05d.csv",i+1);
     ode.outputSDFField("Evolution","Phi",t, 0);
-    printf("Current dt = %g\n", dt);
+    //printf("Current dt = %g\n", dt);
   }
 
   return 0;
