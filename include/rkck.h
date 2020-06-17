@@ -93,6 +93,13 @@ class RKCK : public Solver{
     inline void setErrorTolerance(double t){
       tol = t;
     }
+
+    /**
+     * Reset the recommended time step.
+     */
+    inline void resetRecommendedStepSize(double dt){
+      dtrec = dt;
+    }
 };
 
 #endif

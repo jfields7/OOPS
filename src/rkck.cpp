@@ -65,7 +65,8 @@ Result RKCK::combineStages(std::shared_ptr<FieldMap>& fieldMap, double dt){
       }
     }
   }
-  dtrec = 0.9*dt*fmin(fmax(sqrt(tol/(2.0*fabs(err))),0.3),2.0);
+  temp = 0.9*dt*fmin(fmax(sqrt(tol/(2.0*fabs(err))),0.3),2.0);
+  dtrec = fmin(dtrec, temp);
 
   return SUCCESS;
 }

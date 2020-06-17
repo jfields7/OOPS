@@ -48,6 +48,7 @@ int main(int argc, char* argv[]){
     if(t != ti){
       dt = fmin(dtmax, fmax(dtmin, rkck.getRecommendedStepSize()));
     }
+    rkck.resetRecommendedStepSize(dtmax);
     ode.evolveStep(dt);
 
     //char buffer[12];
