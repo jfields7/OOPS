@@ -31,7 +31,7 @@ class ParamParser{
     /**
      * Update an existing Parameters object from a file.
      */
-    virtual void updateParameters(std::string fname, Parameters *params)=0;
+    virtual bool updateParameters(std::string fname, Parameters *params)=0;
 
     /**
      * Check if the Parameters object matches the id.
