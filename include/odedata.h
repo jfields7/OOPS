@@ -19,9 +19,19 @@ class ODEData {
     unsigned int nEq;
 
     /**
+     * The number of extra lines to allocate.
+     */
+    unsigned int lines;
+
+    /**
      * Raw data for an ODE.
      */
     double **data;
+
+    /**
+     * Empty arrays to use to get a line of data.
+     */
+    double ***line;
 
     /**
      * The Grid this data belongs to.
@@ -33,8 +43,9 @@ class ODEData {
    * The constructor for ODEData.
    * @param eqCount - the number of equations in this system.
    * @param grid    - the Grid this data belongs to.
+   * @param lines   - the number of extra lines to store.
    */
-  ODEData(unsigned int eqCount, const Grid& grid);
+  ODEData(unsigned int eqCount, const Grid& grid, unsigned int lines=0);
 
   /**
    * A destructor for ODEData that deletes all the memory that was allocated.
@@ -47,6 +58,13 @@ class ODEData {
    */
   inline double** getData() const{
     return data;
+  }
+
+  /**
+   * Get an empty array for a line of data. This is stored as [vars][points].
+   */
+  inline double** getLine(unsigned int i) const{
+    return line[i];
   }
 
   /**
