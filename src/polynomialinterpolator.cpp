@@ -6,7 +6,7 @@ PolynomialInterpolator::PolynomialInterpolator(const unsigned int p) : Interpola
   weights = new double[p];
 
   // Build the weights.
-  for(int n = 0; n < p; n++){
+  for(unsigned int n = 0; n < p; n++){
     weights[n] = calculateWeight(n - p/2 + 1);
   }
 }
@@ -50,5 +50,6 @@ double PolynomialInterpolator::interpolate(){
   for(int i = 0; i < nStencil; i++){
     result += weights[i]*stencil[i];
   }
+  return result;
 }
 // }}}

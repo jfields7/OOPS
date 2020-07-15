@@ -32,8 +32,8 @@ Result RK4::calcStage(ODE *ode, double *data0[], double *dataint[], double *dest
   switch(stage){
     case 0:
       ode->rhs(grid, data0, dest);
-      for(int m = 0; m < vars; m++){
-        for(int i = 0; i < shp; i++){
+      for(unsigned int m = 0; m < vars; m++){
+        for(unsigned int i = 0; i < shp; i++){
           dataint[m][i] = data0[m][i] + 0.5*dest[m][i]*dt;
         }
       }
@@ -41,8 +41,8 @@ Result RK4::calcStage(ODE *ode, double *data0[], double *dataint[], double *dest
       break;
     case 1:
       ode->rhs(grid, dataint, dest);
-      for(int m = 0; m < vars; m++){
-        for(int i = 0; i < shp; i++){
+      for(unsigned int m = 0; m < vars; m++){
+        for(unsigned int i = 0; i < shp; i++){
           dataint[m][i] = data0[m][i] + 0.5*dest[m][i]*dt;
         }
       }
@@ -50,8 +50,8 @@ Result RK4::calcStage(ODE *ode, double *data0[], double *dataint[], double *dest
       break;
     case 2:
       ode->rhs(grid, dataint, dest);
-      for(int m = 0; m < vars; m++){
-        for(int i = 0; i < shp; i++){
+      for(unsigned int m = 0; m < vars; m++){
+        for(unsigned int i = 0; i < shp; i++){
           dataint[m][i] = data0[m][i] + dest[m][i]*dt;
         }
       }
@@ -79,8 +79,9 @@ Result RK4::combineStages(double **data[], double *dest[], const Grid& grid, dou
   double term;
   double old;
   for(unsigned int m : evolutionIndices){
-    for(int i = 0; i < shp; i++){
+    for(unsigned int i = 0; i < shp; i++){
       dest[m][i] = dest[m][i] + ((k1[m][i] + 2.0*k2[m][i]) + (2.0*k3[m][i] + k4[m][i]))*dt/6.0;
     }
   }
+  return SUCCESS;
 }

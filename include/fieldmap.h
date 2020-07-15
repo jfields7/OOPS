@@ -7,7 +7,7 @@
 class ODEData;
 class SolverData;
 class Grid;
-class FieldInfo;
+struct FieldInfo;
 
 class FieldMap{
   private:

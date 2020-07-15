@@ -76,17 +76,17 @@ int main(int argc, char* argv[]){
   double dt = domain.getCFL()*(--domain.getGrids().end())->getSpacing();
   //double dt = domain.getCFL()*domain.getGrids().begin()->getSpacing();
   unsigned int M = (tf - ti)/dt;
-  //ode.dump_csv("phi00000.csv", 0, 0);
-  ode.output_frame("Phi", 0, 0);
+  ode.dump_csv("phi00000.csv", 0, 0);
+  //ode.output_frame("Phi", 0, 0);
   //ode.dump_csv("chi00000.csv", 0, 2);
   for(unsigned int i = 0; i < M; i++){
     double t = (i + 1)*dt;
     ode.evolveStep(dt);
 
-    char buffer[12];
+    char buffer[15];
     sprintf(buffer, "phi%05d.csv",i + 1);
-    //ode.dump_csv(buffer, t, 0);
-    ode.output_frame("Phi", t, 0);
+    ode.dump_csv(buffer, t, 0);
+    //ode.output_frame("Phi", t, 0);
     //sprintf(buffer, "chi%05d.csv",i + 1);
     //ode.dump_csv(buffer, t, 2);
   }
