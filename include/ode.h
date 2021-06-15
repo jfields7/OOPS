@@ -280,7 +280,7 @@ class ODE{
     /**
      * Dump all of the current data to a .csv file.
      */
-    void dumpCSV(std::string field, char *name, double t, unsigned int var);
+    void dumpCSV(std::string field, std::string name, double t, unsigned int var);
 
     /**
      * Get the evolution time.

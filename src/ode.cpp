@@ -383,15 +383,15 @@ void ODE::outputSDFField(std::string field, char* name, double t, unsigned int v
 // }}}
 
 // dump_frame {{{
-void ODE::dumpCSV(std::string field, char* name, double t, unsigned int var){
+void ODE::dumpCSV(std::string field, std::string name, double t, unsigned int var){
   static bool first_call = 1;
   FILE *f;
   if(first_call){
-    f = fopen(name, "w");
+    f = fopen(name.c_str(), "w");
     //first_call = 0;
   }
   else{
-    f = fopen(name, "a");
+    f = fopen(name.c_str(), "a");
   }
 
   int nb = domain->getGhostPoints();
