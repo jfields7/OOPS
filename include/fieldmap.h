@@ -39,7 +39,21 @@ class FieldMap{
     /**
      * The FieldMap destructor. It clears all the fields.
      */
-     ~FieldMap();
+    ~FieldMap();
+
+    /**
+     * Get all the fields.
+     */
+    inline const std::map<std::string, std::shared_ptr<ODEData>>& getFields(){
+      return fields;
+    }
+
+    /**
+     * Get all the solver fields.
+     */
+    inline const std::map<std::string, std::shared_ptr<SolverData>>& getSolverFields(){
+      return solverFields;
+    }
 
     /**
      * Add a new field to the map. Fields that will be evolved inside a

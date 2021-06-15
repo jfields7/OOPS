@@ -1,8 +1,9 @@
-#include <rk4.h>
+#include <rkck.h>
 #include <ode.h>
 #include <fieldmap.h>
+#include <cmath>
 
-Result RK4::setStageTime(double srcTime, double &destTime, double dt, unsigned int stage){
+Result RKCK::setStageTime(double srcTime, double &destTime, double dt, unsigned int stage){
   if(stage >= nStages){
     return INVALID_STAGE;
   }
@@ -10,7 +11,7 @@ Result RK4::setStageTime(double srcTime, double &destTime, double dt, unsigned i
   return SUCCESS;
 }
 
-Result RK4::calcStage(ODE *ode, std::shared_ptr<FieldMap>& fieldMap, double dt, unsigned int stage){
+Result RKCK::calcStage(ODE *ode, std::shared_ptr<FieldMap>& fieldMap, double dt, unsigned int stage){
   unsigned int shp = fieldMap->getGrid().getSize();
   unsigned int vars;
   if(stage >= nStages){
@@ -21,12 +22,16 @@ Result RK4::calcStage(ODE *ode, std::shared_ptr<FieldMap>& fieldMap, double dt, 
     auto solverData = field.second;
     double **data0 = solverData->getData();
     double **dataint = solverData->getIntermediateData();
-    double **dest = solverData->getCurrentRHS();
+    //double **dest = solverData->getCurrentRHS();
+    double ***work = solverData->getWorkData();
     unsigned int vars = solverData->getEqCount();
-    if(kc[stage] != 0.0){
+    if(kc[stage][0] != 0.0){
       for(unsigned int m = 0; m < vars; m++){
         for(unsigned int i = 0; i < shp; i++){
-          dataint[m][i] = data0[m][i] + kc[stage]*dest[m][i]*dt;
+          dataint[m][i] = data0[m][i];
+          for(unsigned int k = 0; k <= stage; k++){
+            dataint[m][i] += kc[stage][k]*work[k][m][i]*dt;
+          }
         }
       }
     }
@@ -35,8 +40,10 @@ Result RK4::calcStage(ODE *ode, std::shared_ptr<FieldMap>& fieldMap, double dt, 
   return SUCCESS;
 }
 
-Result RK4::combineStages(std::shared_ptr<FieldMap>& fieldMap, double dt){
+Result RKCK::combineStages(std::shared_ptr<FieldMap>& fieldMap, double dt){
   unsigned int shp = fieldMap->getGrid().getSize();
+  double err = 0.0;
+  double temp = 0.0;
   for(auto field : fieldMap->getSolverFields()){
     auto solverData = field.second;
     double **data0 = solverData->getData();
@@ -46,13 +53,20 @@ Result RK4::combineStages(std::shared_ptr<FieldMap>& fieldMap, double dt){
     double **k2 = work[1];
     double **k3 = work[2];
     double **k4 = work[3];
+    double **k5 = work[4];
+    double **k6 = work[5];
     unsigned int vars = solverData->getEqCount();
     for(unsigned int m = 0; m < vars; m++){
       for(unsigned int i = 0; i < shp; i++){
-        dataint[m][i] = data0[m][i] + ((k1[m][i] + 2.0*k2[m][i]) + (2.0*k3[m][i] + k4[m][i]))*dt/6.0;
+        dataint[m][i] = data0[m][i] + ((c5[0]*k1[m][i] + c5[2]*k3[m][i]) + (c5[3]*k4[m][i] + c5[5]*k6[m][i]))*dt;
+        temp = (dataint[m][i] - data0[m][i]) - ((c4[0]*k1[m][i] + c4[2]*k3[m][i]) + (c4[3]*k4[m][i]) +
+                (c4[4]*k5[m][i] + c4[5]*k6[m][i]))*dt;
+        err = fmax(temp, err);
       }
     }
   }
+  temp = 0.9*dt*fmin(fmax(sqrt(tol/(2.0*fabs(err))),0.3),2.0);
+  dtrec = fmin(dtrec, temp);
 
   return SUCCESS;
 }

@@ -46,9 +46,9 @@ void Domain::setGhostPoints(unsigned int n){
   grids.clear();
 }
 
-unsigned int Domain::getGhostPoints() const{
+/*unsigned int Domain::getGhostPoints() const{
   return nghosts;
-}
+}*/
 
 std::set<Grid>& Domain::getGrids(){
   return grids;

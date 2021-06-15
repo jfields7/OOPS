@@ -24,15 +24,18 @@ struct FieldInfo{
   std::string name;
   unsigned int nEqs;
   unsigned int nStages;
-  FieldInfo(std::string n, unsigned int eqs, unsigned int stages){
+  bool isComm;
+  FieldInfo(std::string n, unsigned int eqs, unsigned int stages, bool comm){
     name = n;
     nEqs = eqs;
     nStages = stages;
+    isComm = comm;
   }
   FieldInfo(const FieldInfo& other){
     name = std::string(other.name);
     nEqs = other.nEqs;
     nStages = other.nStages;
+    isComm = other.isComm;
   }
 };
 // }}}
@@ -74,7 +77,7 @@ class ODE{
     /**
      * The data for all fields on this domain.
      */
-    std::set<std::unique_ptr<FieldMap>> fieldData;
+    std::set<std::shared_ptr<FieldMap>> fieldData;
 
     /**
      * The indices of the variables that should be evolved.
@@ -112,42 +115,34 @@ class ODE{
     /**
      * Apply boundary conditions to the data. The default version assumes that
      * it is a true set of ODEs, so no boundaries are necessary.
-     * @param intermediate - Whether we're modifying the intermediate dataset
-     *                       or the original dataset.
      */
-    virtual void applyBoundaries(bool intermediate) {};
+    virtual void applyBoundaries() {};
 
     /**
      * A function that does nothing by default but can be overwritten in a base
      * class to do stuff after the solver is called but before the grid data is
      * exchanged.
-     * @param intermediate - Whether we're working with an intermediate solver
-     *                       stage or the final combining step.
      */
-    virtual void doAfterStage(bool intermediate){};
+    virtual void doAfterStage(){};
 
     /**
      * A function that does nothing by default but can be overwritten in a base
      * class to do stuff after the grid data is exchanged but before the
      * boundary conditions are applied.
-     * @param intermediate - Whether we're working with an intermediate solver
-     *                       stage or the final combining step.
      */
-    virtual void doAfterExchange(bool intermediate){};
+    virtual void doAfterExchange(){};
 
     /**
      * A function that does nothing by default but can be overwritten in a base
      * class to do stuff after the boundaries are applied.
-     * @param intermediate - Whether we're working with an intermediate solver
-     *                       stage or the final combining step.
      */
-    virtual void doAfterBoundaries(bool intermediate){};
+    virtual void doAfterBoundaries(){};
 
     /**
      * Add a new field to the ODE object. The reallocateData() function
      * needs to be called for any memory to be updated.
      */
-    Result addField(std::string name, unsigned int eqs, bool isEvolved);
+    Result addField(std::string name, unsigned int eqs, bool isEvolved, bool isComm);
 
     /**
      * Remove an field from the ODE object.
@@ -174,21 +169,22 @@ class ODE{
      * Swap the ghost points between two data sets. Again, if the grids are different
      * sizes, we perform interpolation.
      */
-    void exchangeGhostPoints(const SolverData &data1, const SolverData &data2);
+    //void exchangeGhostPoints(const SolverData &data1, const SolverData &data2);
+    void exchangeGhostPoints(const std::shared_ptr<FieldMap> &data1, const std::shared_ptr<FieldMap> &data2);
 
     /**
      * Interpolate from data2 to get the ghost points for data1.
      * @param datal - The left data, assumed to be finer.
      * @param datar - The right data, assumed to be coarser.
      */
-    void interpolateLeft(const SolverData &datal, const SolverData &datar);
+    void interpolateLeft(const std::shared_ptr<FieldMap> &datal, const std::shared_ptr<FieldMap> &datar);
 
     /**
      * Interpolate from data1 to get the ghost points for data2.
      * @param datal - The left data, assumed to be coarser.
      * @param datar - The right data, assumed to be finer.
      */
-    void interpolateRight(const SolverData &datal, const SolverData &datar);
+    void interpolateRight(const std::shared_ptr<FieldMap> &datal, const std::shared_ptr<FieldMap> &datar);
       
   public:
 
@@ -250,13 +246,10 @@ class ODE{
     /**
      * The righthand side routine for the ODE solver. This, of course, should be
      * overwritten in the descendent ODE.
-     * @param grid - The specific grid to perform the calculation on.
-     * @param data - A 2d array of data containing the current data for the 
-     *               system on the Grid.
-     * @param dudt - A 2d array of data to store the righthand side data for
-     *               this Grid object.
+     * @param fieldMap The current FieldMap containing the data of interest.
      */
-    virtual void rhs(const Grid& grid, double** data, double** dudt) = 0;
+    //virtual void rhs(const Grid& grid, double** data, double** dudt) = 0;
+    virtual void rhs(std::shared_ptr<FieldMap>& fieldMap) = 0;
 
     /**
      * Get the number of equations in this system.
@@ -273,19 +266,21 @@ class ODE{
     }
 
     /**
-     * Output a frame of one variable in the ODE to the specified .sdf file.
+     * Get the list of fields.
      */
-    void output_frame(char *name, double t, unsigned int var);
+    inline const std::map<std::string, FieldInfo>& getFieldInfo(){
+      return fieldList;
+    }
 
     /**
      * Output a frame of one variable in an ODE field to the specified .sdf file.
      */
-    void output_field(std::string field, char* name, double t, unsigned int var);
+    void outputSDFField(std::string field, char* name, double t, unsigned int var);
 
     /**
      * Dump all of the current data to a .csv file.
      */
-    void dump_csv(char *name, double t, unsigned int var);
+    void dumpCSV(std::string field, char *name, double t, unsigned int var);
 
     /**
      * Get the evolution time.

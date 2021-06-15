@@ -12,6 +12,8 @@ FirstOrderWave::FirstOrderWave(Domain& d, Solver& s) : ODE(3, 1){
   domain = &d;
   solver = &s;
 
+  addField("Evolution",3,true,true);
+
   reallocateData();
 }
 // }}}
@@ -22,12 +24,15 @@ FirstOrderWave::~FirstOrderWave(){
 // }}}
 
 // rhs {{{
-void FirstOrderWave::rhs(const Grid& grid, double **u, double **dudt){
+void FirstOrderWave::rhs(std::shared_ptr<FieldMap>& fieldMap){
+  const Grid& grid = fieldMap->getGrid();
   // Check that the grid is actually big enough.
   if(grid.getSize() < 5){
     printf("Grid is too small. Need at least 5 points.\n");
     return;
   }
+  double **dudt = fieldMap->getSolverField("Evolution")->getCurrentRHS();
+  double **u = fieldMap->getSolverField("Evolution")->getIntermediateData();
   // Define some variables we'l need.
   double stencil3[3] = {0.0, 0.0, 0.0};
   double stencil5[5] = {0.0, 0.0, 0.0, 0.0, 0.0};
@@ -38,16 +43,6 @@ void FirstOrderWave::rhs(const Grid& grid, double **u, double **dudt){
   // The second leftmost needs to use the centered second-order operator. The third point can use the
   // full five-point stencil.
 
-  // Leftmost point
-  /*dudt[0][U_PHI] = u[0][U_PI];
-  stencil3[0] = u[0][U_CHI];
-  stencil3[1] = u[1][U_CHI];
-  stencil3[2] = u[2][U_CHI];
-  dudt[0][U_PI] = operators::dx_2off(stencil3, dx);
-  stencil3[0] = u[0][U_PI];
-  stencil3[1] = u[1][U_PI];
-  stencil3[2] = u[2][U_PI];
-  dudt[0][U_CHI] = operators::dx_2off(stencil3, dx);*/
   dudt[U_PHI][0] = u[U_PI][0];
   stencil3[0] = u[U_CHI][0];
   stencil3[1] = u[U_CHI][1];
@@ -59,15 +54,6 @@ void FirstOrderWave::rhs(const Grid& grid, double **u, double **dudt){
   dudt[U_CHI][0] = operators::dx_2off(stencil3, dx);
 
   // Second leftmost point
-  /*dudt[1][U_PHI] = u[1][U_PI];
-  stencil3[0] = u[0][U_CHI];
-  stencil3[1] = u[1][U_CHI];
-  stencil3[2] = u[2][U_CHI];
-  dudt[1][U_PI] = operators::dx_2(stencil3, dx);
-  stencil3[0] = u[0][U_PI];
-  stencil3[1] = u[1][U_PI];
-  stencil3[2] = u[2][U_PI];
-  dudt[1][U_CHI] = operators::dx_2(stencil3, dx);*/
   dudt[U_PHI][1] = u[U_PI][1];
   stencil3[0] = u[U_CHI][0];
   stencil3[1] = u[U_CHI][1];
@@ -199,23 +185,15 @@ void FirstOrderWave::applyKODiss(const Grid& grid, double **u, double **dudt){
 
 // applyBoundaries {{{
 //void FirstOrderWave::applyBoundaries(double **data, unsigned int shp){
-void FirstOrderWave::applyBoundaries(bool intermediate){
+void FirstOrderWave::applyBoundaries(){
   unsigned int nb = domain->getGhostPoints();
-  auto left_it = data.begin();
-  auto right_it = --data.end();
+  auto left_it = fieldData.begin();
+  auto right_it = --fieldData.end();
 
-  double **left;
-  double **right;
+  double **left = (*left_it)->getSolverField("Evolution")->getIntermediateData();
+  double **right = (*right_it)->getSolverField("Evolution")->getIntermediateData();
 
-  if(!intermediate){
-    left = left_it->getData();
-    right = right_it->getData();
-  }
-  else{
-    left = left_it->getIntermediateData();
-    right = right_it->getIntermediateData();
-  }
-  unsigned int nr = right_it->getGrid().getSize();
+  unsigned int nr = (*right_it)->getGrid().getSize();
 
   // For now, we'll just apply fixed boundaries.
   for(int i = 0; i < nb; i++){
@@ -250,10 +228,11 @@ void FirstOrderWave::initData(){
       applyGaussian();
       break;
     case WaveParameters::FLAT:
-      for(auto it = data.begin(); it != data.end(); ++it){
-        const double *x = it->getGrid().getPoints();
-        unsigned int nx = it->getGrid().getSize();
-        double **u = it->getData();
+      for(auto it = fieldData.begin(); it != fieldData.end(); ++it){
+        auto evol = (**it)["Evolution"];
+        const double *x = evol->getGrid().getPoints();
+        unsigned int nx = evol->getGrid().getSize();
+        double **u = evol->getData();
         for(unsigned int i = 0; i < nx; i++){
           u[U_PHI][i] = 0.0;
           u[U_PI][i] = 1.0;
@@ -276,10 +255,11 @@ void FirstOrderWave::applyGaussian(){
   double amp = params->getGaussianAmplitude();
 
   // Next, let's loop through every grid and start assigning points.
-  for(auto it = data.begin(); it != data.end(); ++it){
-    const double *x = it->getGrid().getPoints();
-    unsigned int nx = it->getGrid().getSize();
-    double **u = it->getData();
+  for(auto it = fieldData.begin(); it != fieldData.end(); ++it){
+    auto evol = (**it)["Evolution"];
+    const double *x = evol->getGrid().getPoints();
+    unsigned int nx = evol->getGrid().getSize();
+    double **u = evol->getData();
     for(unsigned int i = 0; i < nx; i++){
       double val = amp*std::exp(-(x[i] - x0)*(x[i] - x0)*64.0);
       u[U_PHI][i] = val;

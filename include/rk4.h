@@ -5,8 +5,10 @@
 #include "grid.h"
 #include "domain.h"
 #include "solver.h"
+#include <memory>
 
 class ODE;
+class FieldMap;
 
 /****************************************************************************************
  *
@@ -23,23 +25,30 @@ class ODE;
 
 class RK4 : public Solver{
   private:
+    /**
+     * The coefficients for each stage.
+     */
+    const double kc[4];
+    const double tc[4];
+
   public:
     /**
      * The default constructor for an RK4 object.
      */
-    RK4() : Solver(4) {};
+    RK4() : Solver(4),
+            kc{0.5, 0.5, 1.0, 0.0},
+            tc{0.0, 0.5, 0.5, 1.0} {
+    };
 
     /**
      * An RK4 destructor. It frees any memory used.
      */
-    ~RK4() {};
+    virtual ~RK4() {};
 
     // Inherited methods
     virtual Result setStageTime(double srcTime, double &destTime, double dt, unsigned int stage);
-    virtual Result calcStage(ODE *ode, double *data0[], double *dataint[], double *dest[], 
-                             const Grid& grid, double dt, unsigned int stage);
-    virtual Result combineStages(double **data[], double *dest[], const Grid& grid, double dt,
-      const std::vector<unsigned int>& evolutionIndices);
+    virtual Result calcStage(ODE *ode, std::shared_ptr<FieldMap>& fieldMap, double dt, unsigned int stage);
+    virtual Result combineStages(std::shared_ptr<FieldMap>& fieldMap, double dt);
 };
 
 #endif

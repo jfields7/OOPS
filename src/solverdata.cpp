@@ -6,6 +6,7 @@
 SolverData::SolverData(unsigned int eqCount, unsigned int nStages, const Grid& grid): ODEData(eqCount, grid){
   this->nStages = nStages;
   unsigned int nx = mGrid.getSize();
+  currStage = 0;
   // Try to allocate memory for the arrays.
   try{
     data_int = new double*[eqCount];
@@ -25,6 +26,7 @@ SolverData::SolverData(unsigned int eqCount, unsigned int nStages, const Grid& g
     nEq = 0;
     data_int = NULL;
     work = NULL;
+    currStage = 0;
   }
 }
 // }}}

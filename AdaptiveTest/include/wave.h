@@ -1,33 +1,30 @@
-#ifndef FIRST_ORDER_WAVE_H
-#define FIRST_ORDER_WAVE_H
+#ifndef WAVE_H
+#define WAVE_H
 
 #include <ode.h>
 #include <waveparameters.h>
 
-class FirstOrderWave : public ODE {
+class Wave : public ODE {
   private:
-    // Variable labels.
+    // Variable labels
     static const unsigned int U_PHI = 0;
     static const unsigned int U_PI = 1;
     static const unsigned int U_CHI = 2;
 
-    void applyKODiss(const Grid& grid, double **u, double **dudt);
-
-    void applyGaussian();
-
     WaveParameters *params;
+
   protected:
     virtual void applyBoundaries();
 
     virtual void rhs(std::shared_ptr<FieldMap>& fieldMap);
 
   public:
-    FirstOrderWave(Domain& d, Solver& s);
-    virtual ~FirstOrderWave();
+    Wave(Domain& d, Solver& s);
+    virtual ~Wave();
 
     virtual void initData();
 
-    void setParameters(WaveParameters* p);
+    void setParameters(WaveParameters *p);
     WaveParameters* getParameters();
 };
 

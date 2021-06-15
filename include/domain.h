@@ -81,7 +81,9 @@ class Domain{
      * Get the number of ghost points used by the domain.
      * @returns An unsigned integer indicating the number of ghost points.
      */
-    unsigned int getGhostPoints() const;
+    inline unsigned int getGhostPoints() const{
+      return nghosts;
+    }
 
     /**
      * Get all the grids used by this domain.
