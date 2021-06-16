@@ -8,3 +8,6 @@ Now you have OOPS - the Object-Oriented PDE Solver. It's simple, it's easy, and 
 Is it the fastest kid on the block? Probably not. Will you get your code working faster? Almost certainly.
 
 OOPS also prides itself on being portable. Difficult installation procedures are a personal pet peeve, and the easiest way to ensure that code compiles with just the tap of a button is to eliminate as many external dependencies as possible. While a few optional features may require additional libraries, all core features only require a reasonably modern C++ compiler (C++11 or later), CMake, and Python 3 with standard libraries. This even includes a couple pleasant surprises like parameter file parsers and code generation. In theory, OOPS should be able to run on Windows, MacOS, or your favorite Linux distribution without sacrificing any of the most important features.
+
+# Using OOPS
+The best way to get started is to [read the documentation](https://github.com/jfields7/OOPS/wiki) on the wiki (currently a work in progress) and look at the `FieldTest`, `AdaptiveTest`, and `MultiGrid` examples in the repository.
